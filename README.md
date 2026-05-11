@@ -1,114 +1,117 @@
-# Portfolio Site
+# Abubakar Mahmood Portfolio
 
-A minimalist, high-performance developer portfolio website built with modern web technologies.
+Personal portfolio site for Abubakar Mahmood, a junior software engineer based in Lahore focused on Flutter, backend APIs, offline-first systems, and production-minded project delivery.
 
-## Overview
+The site is intentionally small: one Astro page, static output, minimal client JavaScript, and explicit deployment config for Vercel and Netlify.
 
-Single-page portfolio website showcasing projects, skills, and contact information. Designed for fast load times, accessibility, and great user experience across all devices.
+## Live Deployment
 
-## Features
+This repository is ready for Git-based deployment.
 
-- **Single-page design** with smooth scroll navigation
-- **Dark mode** with system preference detection
-- **95+ Lighthouse scores** across all metrics
-- **Mobile-first** responsive design
-- **Accessibility-focused** with ARIA labels, keyboard navigation, and focus states
-- **SEO optimized** with meta tags and Open Graph support
-- **Zero-cost hosting** on Vercel or Netlify free tier
+| Platform | Build command | Output directory |
+| --- | --- | --- |
+| Vercel | `npm run build` | `dist` |
+| Netlify | `npm run build` | `dist` |
+
+Deployment config is committed in:
+
+- `vercel.json`
+- `netlify.toml`
 
 ## Tech Stack
 
-- **Framework**: Astro or Next.js 14+
-- **Styling**: Tailwind CSS
-- **Deployment**: Vercel / Netlify
-- **Forms**: Formspree (optional)
-- **Analytics**: Vercel/Netlify Analytics
+- Astro
+- TypeScript
+- Tailwind CSS
+- Static HTML/CSS/JS output
 
-## Project Sections
+## Site Content
 
-### 1. Hero Section
-- Name and professional title
-- Brief bio (2-3 lines)
-- Social links (GitHub, LinkedIn)
-- Smooth scroll indicator
+The current portfolio highlights:
 
-### 2. Projects Section
-4 featured project cards with:
-- Project screenshot/GIF
-- Technology stack badges
-- Brief description
-- Links to live demo and source code
-- Expandable case study (challenges & solutions)
+- PakConnect
+- Incident & SLA Tracker
+- SalahSync
+- Unified Public Data Gateway
+- Predictive Dispatch Simulator
 
-### 3. Skills Section
-Clean grid layout of technologies and tools (no percentages or progress bars)
+The skills and positioning are aligned with the resume profile: Flutter/Dart, FastAPI/Python, TypeScript/GraphQL, Java, SQL, Docker, CI, testing, and observability.
 
-### 4. Contact Section
-- Email link
-- Optional contact form
-- Social media links
-
-## Getting Started
-
-See **[CLAUDE.md](./CLAUDE.md)** for complete step-by-step implementation guide including:
-- Project setup and installation
-- Component code with examples
-- Configuration and customization
-- Testing and optimization
-- Deployment instructions
-- Post-launch checklist
-
-**Estimated build time**: 4-6 hours
-
-## Design Principles
-
-✅ **Keep it simple** - Clean, professional design
-✅ **Performance first** - Optimized images, lazy loading
-✅ **Accessible** - WCAG compliant, keyboard navigable
-✅ **Mobile-friendly** - Responsive on all screen sizes
-
-❌ **Avoid** - Particle effects, loading screens, auto-play media, skill percentages, generic templates
-
-## Performance Targets
-
-- First Contentful Paint: < 1.5s
-- Largest Contentful Paint: < 2.5s
-- Time to Interactive: < 3.5s
-- Cumulative Layout Shift: < 0.1
-- Total Page Size: < 500KB
-
-## Quick Start
+## Local Development
 
 ```bash
-# See CLAUDE.md for detailed setup
-npm create astro@latest portfolio -- --template minimal --typescript strict
-cd portfolio
-npm install -D tailwindcss @astrojs/tailwind
-npx astro add tailwind
+npm install
 npm run dev
 ```
 
-## Deployment
+Open `http://localhost:4321`.
 
-Deploy to Vercel:
+## Build
+
 ```bash
-npm install -g vercel
-vercel login
-vercel
+npm run build
 ```
 
-Or deploy to Netlify:
+The build runs:
+
 ```bash
-npm install -g netlify-cli
-netlify login
-netlify init
-netlify deploy --prod
+astro check && astro build
 ```
 
-## License
+Generated output is written to `dist/`.
 
-MIT
+## Preview Production Build
+
+```bash
+npm run preview
+```
+
+## Quality Checks
+
+Before deployment, this site was checked with:
+
+- `npm run build`
+- Local browser smoke test
+- Keyboard navigation test
+- Lighthouse audit
+
+Latest local Lighthouse result:
+
+| Category | Score |
+| --- | ---: |
+| Performance | 100 |
+| Accessibility | 100 |
+| Best Practices | 100 |
+| SEO | 100 |
+
+## Project Structure
+
+```text
+src/
+  components/
+    Contact.astro
+    Hero.astro
+    Projects.astro
+    Skills.astro
+    SlideNav.astro
+  layouts/
+    BaseLayout.astro
+  pages/
+    index.astro
+  styles/
+    global.css
+```
+
+## Maintenance Notes
+
+- Keep project claims tied to real repositories, demos, or resume-backed work.
+- Re-run `npm run build` before pushing.
+- Re-run Lighthouse after major layout or asset changes.
+- Avoid committing generated folders such as `dist/`, `.astro/`, `.vercel/`, or `node_modules/`.
 
 ## Author
 
 Abubakar Mahmood
+
+- GitHub: [AbubakarMahmood1](https://github.com/AbubakarMahmood1)
+- LinkedIn: [abubakar-mahmood](https://linkedin.com/in/abubakar-mahmood)
