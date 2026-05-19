@@ -38,10 +38,15 @@
     outline-offset: 4px;
   }
 
-  /* Remove default scrolling */
+  /* The slide deck owns scrolling; use dynamic viewport units for mobile browser chrome. */
   html, body {
-    height: 100vh;
+    height: 100%;
     overflow: hidden;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   /* Terminal cursor effect */
@@ -54,6 +59,64 @@
     content: '_';
     animation: blink 1s infinite;
     color: var(--color-accent);
+  }
+}
+
+@layer components {
+  .app-viewport {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .slide-scroll {
+    scroll-snap-type: y proximity;
+  }
+
+  .slide-section {
+    min-height: 100vh;
+    min-height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  .safe-link {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .project-rail {
+    scrollbar-color: var(--color-accent) transparent;
+    scrollbar-width: thin;
+  }
+
+  .project-tab {
+    border-color: color-mix(in srgb, var(--color-muted) 45%, transparent);
+    color: var(--color-text);
+  }
+
+  .project-tab:hover,
+  .project-tab:focus-visible,
+  .project-tab.is-active {
+    border-color: var(--color-accent);
+    background: rgba(0, 255, 242, 0.06);
+  }
+
+  .project-tab.is-active .project-tab-number {
+    opacity: 1;
+  }
+
+  .project-panel[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .slide-scroll {
+      scroll-snap-type: y mandatory;
+    }
+
+    .slide-section {
+      scroll-snap-stop: always;
+    }
   }
 }
 

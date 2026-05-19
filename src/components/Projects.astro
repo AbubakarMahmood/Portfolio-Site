@@ -1,99 +1,178 @@
 ---
-const projects = [
-  {
-    num: "01",
-    title: "PakConnect",
-    description: "Off-grid peer-to-peer messaging prototype with BLE discovery, secure sessions, encrypted archives, offline queues, and custom relay/routing design.",
-    tech: ["Flutter", "Dart", "BLE", "SQLCipher"],
-    githubUrl: "https://github.com/AbubakarMahmood1",
-    metric: "Offline-first secure messaging"
-  },
-  {
-    num: "02",
-    title: "Incident & SLA Tracker",
-    description: "Incident-management API with JWT auth, priority-based SLA assignment, scheduled breach workers, migrations, and service-layer tests.",
-    tech: ["FastAPI", "PostgreSQL", "Redis", "Docker"],
-    githubUrl: "https://github.com/AbubakarMahmood1",
-    metric: "Observability + CI"
-  },
-  {
-    num: "03",
-    title: "SalahSync",
-    description: "Offline-first prayer-time and mosque Jamaat scheduler with local persistence, timing-rule resolution, backup/import, Qibla tools, widgets, and tests.",
-    tech: ["Flutter", "Drift", "SQLite", "Riverpod"],
-    githubUrl: "https://github.com/AbubakarMahmood1",
-    metric: "Local-first mobile utility"
-  },
-  {
-    num: "04",
-    title: "Unified Public Data Gateway",
-    description: "GraphQL gateway that federates public REST APIs with caching, DataLoader batching, persisted queries, rate limits, subscriptions, tests, and Docker config.",
-    tech: ["TypeScript", "Apollo Server", "GraphQL"],
-    githubUrl: "https://github.com/AbubakarMahmood1",
-    metric: "Public API federation"
-  },
-  {
-    num: "05",
-    title: "Predictive Dispatch Simulator",
-    description: "Emergency-response simulator using dynamic weighted graphs, Dijkstra/A* routing, custom indexed heap, CSV scenarios, and JUnit-tested dispatch logic.",
-    tech: ["Java 21", "Maven", "JUnit", "Graphs"],
-    githubUrl: "https://github.com/AbubakarMahmood1",
-    metric: "Reproducible routing metrics"
-  }
-];
+import { getPortfolioProjects } from '../lib/projects';
+
+const projects = await getPortfolioProjects();
 ---
 
-<section class="slide-section min-h-screen w-full flex items-center justify-center relative px-6 md:px-16 py-20">
+<section class="slide-section w-full flex items-center justify-center relative px-6 md:px-16 py-6 sm:py-14 md:py-20">
   <div class="max-w-7xl w-full">
-    <div class="mb-10 md:mb-12">
-      <div class="font-body text-sm text-[var(--color-muted)] mb-4">
+    <div class="mb-4 md:mb-12">
+      <div class="font-body text-sm text-[var(--color-muted)] mb-3 md:mb-4">
         <span class="text-[var(--color-accent)]">$</span> ls -la ./projects
       </div>
       <h2 class="font-heading text-4xl md:text-7xl mb-4">SELECTED<br/>WORK</h2>
     </div>
 
-    <div class="space-y-5 md:space-y-6">
-      {projects.map((project) => (
-        <div class="group border-b border-[var(--color-muted)] border-opacity-20 pb-5 md:pb-6 hover:border-[var(--color-accent)] transition-colors">
-          <div class="flex items-start gap-4 md:gap-8">
-            <div class="font-heading text-3xl md:text-4xl text-[var(--color-accent)] opacity-50 w-12 md:w-16 flex-shrink-0">
+    <div class="project-deck grid gap-3 md:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.4fr)] md:gap-12" data-project-deck>
+      <div
+        class="project-rail flex gap-2 overflow-x-auto pb-2 md:max-h-[23rem] md:flex-col md:overflow-y-auto md:overflow-x-hidden md:pb-0"
+        role="tablist"
+        aria-label="Selected projects"
+      >
+        {projects.map((project, index) => (
+          <button
+            type="button"
+            id={`project-tab-${project.num}`}
+            class={`project-tab min-w-[10rem] md:min-w-0 text-left border-l-2 px-3 py-2 md:px-4 md:py-3 transition-colors ${index === 0 ? 'is-active' : ''}`}
+            data-project-index={index}
+            role="tab"
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-controls={`project-panel-${project.num}`}
+            tabindex={index === 0 ? '0' : '-1'}
+          >
+            <span class="project-tab-number font-heading text-2xl text-[var(--color-accent)] opacity-60">
               {project.num}
-            </div>
+            </span>
+            <span class="mt-1 block font-heading text-sm leading-tight md:text-lg">
+              {project.title}
+            </span>
+            <span class="mt-1 md:mt-2 block font-body text-[0.65rem] md:text-[0.7rem] uppercase text-[var(--color-muted)]">
+              {project.metric}
+            </span>
+          </button>
+        ))}
+      </div>
 
-            <div class="flex-grow">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-3">
-                <h3 class="font-heading text-xl md:text-3xl group-hover:text-[var(--color-accent)] transition-colors">
+      <div class="project-stage border-l-2 border-[var(--color-accent)] pl-5 sm:pl-6 md:min-h-[23rem]">
+        {projects.map((project, index) => (
+          <article
+            id={`project-panel-${project.num}`}
+            class="project-panel"
+            data-project-panel
+            role="tabpanel"
+            aria-labelledby={`project-tab-${project.num}`}
+            hidden={index !== 0}
+          >
+            <div class="mb-4 md:mb-5 flex items-start justify-between gap-4">
+              <div>
+                <div class="font-body text-xs text-[var(--color-muted)] mb-2 md:mb-3">
+                  <span class="text-[var(--color-accent)]">$</span> open ./projects/{project.num}
+                </div>
+                <h3 class="font-heading text-3xl leading-none md:text-6xl">
                   {project.title}
                 </h3>
+              </div>
+              <div class="font-body text-xs whitespace-nowrap pt-1">
+                <span class="text-[var(--color-accent)]">{project.num}</span>
+                <span class="text-[var(--color-muted)]"> / {String(projects.length).padStart(2, '0')}</span>
+              </div>
+            </div>
+
+            <p class="max-w-3xl text-sm font-light leading-5 text-[var(--color-muted)] md:text-base md:leading-7">
+              {project.description}
+            </p>
+
+            <div class="mt-4 md:mt-6 flex flex-wrap gap-2 font-body text-xs md:gap-3">
+              {project.tech.map((t) => (
+                <span class="border border-[var(--color-muted)] border-opacity-40 px-3 py-1 text-[var(--color-muted)]">
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            <div class="mt-4 md:mt-6 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+              <div>
+                <div class="font-body text-xs uppercase text-[var(--color-muted)] mb-2">Output</div>
+                <div class="font-body text-sm text-[var(--color-accent)]">
+                  {project.metric}
+                </div>
+              </div>
+
+              <div class="flex gap-4 font-body text-sm">
                 <a
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-sm font-body hover:text-[var(--color-accent)] transition-colors whitespace-nowrap"
+                  class="hover:text-[var(--color-accent)] transition-colors"
                 >
                   -> github
                 </a>
-              </div>
 
-              <p class="text-sm font-light mb-3 text-[var(--color-muted)] max-w-3xl">
-                {project.description}
-              </p>
-
-              <div class="flex flex-wrap gap-3 md:gap-4 items-center">
-                <div class="flex flex-wrap gap-2 font-body text-xs">
-                  {project.tech.map((t) => (
-                    <span class="text-[var(--color-muted)]">{t}</span>
-                  ))}
-                </div>
-
-                <div class="font-body text-xs text-[var(--color-accent)] border-l border-[var(--color-accent)] pl-4">
-                  {project.metric}
-                </div>
+                {project.homepage && (
+                  <a
+                    href={project.homepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-[var(--color-accent)] transition-colors"
+                  >
+                    -> live
+                  </a>
+                )}
               </div>
             </div>
-          </div>
-        </div>
-      ))}
+          </article>
+        ))}
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  const decks = document.querySelectorAll<HTMLElement>('[data-project-deck]');
+
+  decks.forEach((deck) => {
+    const tabs = Array.from(deck.querySelectorAll<HTMLButtonElement>('[data-project-index]'));
+    const panels = Array.from(deck.querySelectorAll<HTMLElement>('[data-project-panel]'));
+
+    function activateProject(index: number, focusTab = false) {
+      if (index < 0 || index >= tabs.length) return;
+
+      tabs.forEach((tab, tabIndex) => {
+        const isActive = tabIndex === index;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+      });
+
+      panels.forEach((panel, panelIndex) => {
+        panel.hidden = panelIndex !== index;
+      });
+
+      tabs[index]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+
+      if (focusTab) {
+        tabs[index]?.focus();
+      }
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activateProject(index));
+      tab.addEventListener('keydown', (event) => {
+        const currentIndex = tabs.indexOf(tab);
+        let nextIndex = currentIndex;
+
+        switch (event.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            nextIndex = (currentIndex + 1) % tabs.length;
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+            break;
+          case 'Home':
+            nextIndex = 0;
+            break;
+          case 'End':
+            nextIndex = tabs.length - 1;
+            break;
+          default:
+            return;
+        }
+
+        event.preventDefault();
+        activateProject(nextIndex, true);
+      });
+    });
+  });
+</script>

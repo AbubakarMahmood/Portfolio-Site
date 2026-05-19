@@ -12,19 +12,11 @@ import Contact from '../components/Contact.astro';
   description="Junior Software Engineer in Lahore focused on Flutter, backend APIs, offline-first systems, and practical production-minded software."
 >
   <SlideNav>
-    <main id="slide-scroll" class="snap-y snap-mandatory h-screen w-full overflow-y-auto overflow-x-hidden">
-      <div class="snap-start snap-always">
-        <Hero />
-      </div>
-      <div class="snap-start snap-always">
-        <Projects />
-      </div>
-      <div class="snap-start snap-always">
-        <Skills />
-      </div>
-      <div class="snap-start snap-always">
-        <Contact />
-      </div>
+    <main id="slide-scroll" class="slide-scroll app-viewport w-full overflow-y-auto overflow-x-hidden">
+      <Hero />
+      <Projects />
+      <Skills />
+      <Contact />
     </main>
   </SlideNav>
 </BaseLayout>

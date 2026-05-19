@@ -27,13 +27,23 @@ Deployment config is committed in:
 
 ## Site Content
 
-The current portfolio highlights:
+Project data is build-time dynamic. `src/components/Projects.astro` loads from `src/lib/projects.ts`, which fetches public GitHub repo metadata during `npm run build` and merges it with curated copy in `src/data/projectOverrides.ts`.
+
+The current curated highlights are:
 
 - PakConnect
 - Incident & SLA Tracker
 - SalahSync
 - Unified Public Data Gateway
 - Predictive Dispatch Simulator
+
+To add a new project without touching the component:
+
+1. Make the GitHub repo public.
+2. Add the GitHub topic `portfolio-featured`.
+3. Rebuild/redeploy the portfolio.
+
+For homepage-grade wording, add an entry in `src/data/projectOverrides.ts`. Curated entries control title, order, description, stack labels, and metric; GitHub still supplies the live repo URL and homepage when available. Set `GITHUB_TOKEN` in the build environment if GitHub rate limits become noisy.
 
 The skills and positioning are aligned with the resume profile: Flutter/Dart, FastAPI/Python, TypeScript/GraphQL, Java, SQL, Docker, CI, testing, and observability.
 
@@ -94,8 +104,12 @@ src/
     Projects.astro
     Skills.astro
     SlideNav.astro
+  data/
+    projectOverrides.ts
   layouts/
     BaseLayout.astro
+  lib/
+    projects.ts
   pages/
     index.astro
   styles/

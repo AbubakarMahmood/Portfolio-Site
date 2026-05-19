@@ -2,12 +2,12 @@
 // SlideNav component - Handles keyboard navigation between sections
 ---
 
-<div id="slide-container" class="relative h-screen w-full overflow-x-hidden">
+<div id="slide-container" class="relative app-viewport w-full overflow-x-hidden">
   <slot />
 </div>
 
 <!-- Section Indicator -->
-<div class="fixed bottom-8 right-8 z-50 font-body text-sm">
+<div class="fixed bottom-8 right-8 z-50 font-body text-sm hidden sm:block pointer-events-none">
   <span id="current-section" class="text-[var(--color-accent)] text-2xl font-bold">01</span>
   <span class="text-[var(--color-muted)]"> / 04</span>
 </div>
@@ -24,7 +24,7 @@
 </div>
 
 <!-- Keyboard Hint -->
-<div class="fixed bottom-8 left-8 z-50 font-body text-xs text-[var(--color-muted)] hidden sm:flex gap-4">
+<div class="fixed bottom-8 left-5 z-50 font-body text-xs text-[var(--color-muted)] hidden sm:flex gap-3">
   <span>← →</span>
   <span>1-4</span>
   <span>ESC</span>
@@ -61,7 +61,14 @@
   function updateSection(index: number) {
     if (index < 0 || index >= totalSections) return;
     setActiveSection(index);
-    sections[index]?.scrollIntoView({ behavior: 'smooth' });
+    const target = sections[index];
+    if (!target) return;
+
+    if (scrollRoot) {
+      scrollRoot.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   // Keyboard navigation
