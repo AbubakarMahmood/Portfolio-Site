@@ -127,5 +127,5 @@ src/
 
 Abubakar Mahmood
 
-- GitHub: [AbubakarMahmood1](https://github.com/AbubakarMahmood1)
+- GitHub: [AbubakarMahmood](https://github.com/AbubakarMahmood)
 - LinkedIn: [abubakar-mahmood](https://linkedin.com/in/abubakar-mahmood)

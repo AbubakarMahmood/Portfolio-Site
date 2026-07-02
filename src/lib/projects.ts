@@ -1,6 +1,6 @@
 import { curatedProjects, type ProjectOverride } from '../data/projectOverrides';
 
-const GITHUB_USERNAME = 'AbubakarMahmood1';
+const GITHUB_USERNAME = 'AbubakarMahmood';
 const FEATURED_TOPIC = 'portfolio-featured';
 
 interface GitHubRepo {

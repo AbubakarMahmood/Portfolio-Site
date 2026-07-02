@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TopBar from '../components/TopBar.astro';
 import SlideNav from '../components/SlideNav.astro';
 import Hero from '../components/Hero.astro';
 import Projects from '../components/Projects.astro';
@@ -11,6 +12,7 @@ import Contact from '../components/Contact.astro';
   title="Abubakar Mahmood - Junior Software Engineer"
   description="Junior Software Engineer in Lahore focused on Flutter, backend APIs, offline-first systems, and practical production-minded software."
 >
+  <TopBar />
   <SlideNav>
     <main id="slide-scroll" class="slide-scroll app-viewport w-full overflow-y-auto overflow-x-hidden">
       <Hero />

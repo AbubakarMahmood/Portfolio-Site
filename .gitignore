@@ -24,3 +24,9 @@ pnpm-debug.log*
 # vscode setting folders
 .vscode/
 .vercel
+
+# astro generated types
+.astro/
+
+# claude code local config
+.claude/

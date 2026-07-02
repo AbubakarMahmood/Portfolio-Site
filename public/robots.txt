@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abubakarmahmood.com/sitemap-index.xml

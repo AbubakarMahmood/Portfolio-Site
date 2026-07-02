@@ -4,16 +4,16 @@ import { getPortfolioProjects } from '../lib/projects';
 const projects = await getPortfolioProjects();
 ---
 
-<section class="slide-section w-full flex items-center justify-center relative px-6 md:px-16 py-6 sm:py-14 md:py-20">
+<section id="work" class="slide-section w-full flex items-center justify-center relative px-6 md:px-16 py-6 sm:py-14 md:py-20">
   <div class="max-w-7xl w-full">
     <div class="mb-4 md:mb-12">
-      <div class="font-body text-sm text-[var(--color-muted)] mb-3 md:mb-4">
+      <div class="reveal font-body text-sm text-[var(--color-muted)] mb-3 md:mb-4">
         <span class="text-[var(--color-accent)]">$</span> ls -la ./projects
       </div>
-      <h2 class="font-heading text-4xl md:text-7xl mb-4">SELECTED<br/>WORK</h2>
+      <h2 class="reveal font-heading text-4xl md:text-7xl mb-4" style="--reveal-delay: 0.08s">SELECTED<br/>WORK</h2>
     </div>
 
-    <div class="project-deck grid gap-3 md:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.4fr)] md:gap-12" data-project-deck>
+    <div class="reveal project-deck grid gap-3 md:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.4fr)] md:gap-12" style="--reveal-delay: 0.16s" data-project-deck>
       <div
         class="project-rail flex gap-2 overflow-x-auto pb-2 md:max-h-[23rem] md:flex-col md:overflow-y-auto md:overflow-x-hidden md:pb-0"
         role="tablist"
@@ -23,20 +23,20 @@ const projects = await getPortfolioProjects();
           <button
             type="button"
             id={`project-tab-${project.num}`}
-            class={`project-tab min-w-[10rem] md:min-w-0 text-left border-l-2 px-3 py-2 md:px-4 md:py-3 transition-colors ${index === 0 ? 'is-active' : ''}`}
+            class={`project-tab min-w-[10rem] md:min-w-0 text-left border-l-2 px-3 py-2 md:px-4 md:py-3 ${index === 0 ? 'is-active' : ''}`}
             data-project-index={index}
             role="tab"
             aria-selected={index === 0 ? 'true' : 'false'}
             aria-controls={`project-panel-${project.num}`}
             tabindex={index === 0 ? '0' : '-1'}
           >
-            <span class="project-tab-number font-heading text-2xl text-[var(--color-accent)] opacity-60">
+            <span class="project-tab-number font-heading text-2xl text-[var(--color-accent)]">
               {project.num}
             </span>
-            <span class="mt-1 block font-heading text-sm leading-tight md:text-lg">
+            <span class="mt-1 block font-heading text-sm leading-tight md:text-lg text-[var(--color-text)]">
               {project.title}
             </span>
-            <span class="mt-1 md:mt-2 block font-body text-[0.65rem] md:text-[0.7rem] uppercase text-[var(--color-muted)]">
+            <span class="mt-1 md:mt-2 block font-body text-[0.65rem] md:text-[0.7rem] uppercase tracking-caps text-[var(--color-muted)]">
               {project.metric}
             </span>
           </button>
@@ -58,7 +58,7 @@ const projects = await getPortfolioProjects();
                 <div class="font-body text-xs text-[var(--color-muted)] mb-2 md:mb-3">
                   <span class="text-[var(--color-accent)]">$</span> open ./projects/{project.num}
                 </div>
-                <h3 class="font-heading text-3xl leading-none md:text-6xl">
+                <h3 class="font-heading text-3xl md:text-6xl">
                   {project.title}
                 </h3>
               </div>
@@ -74,7 +74,7 @@ const projects = await getPortfolioProjects();
 
             <div class="mt-4 md:mt-6 flex flex-wrap gap-2 font-body text-xs md:gap-3">
               {project.tech.map((t) => (
-                <span class="border border-[var(--color-muted)] border-opacity-40 px-3 py-1 text-[var(--color-muted)]">
+                <span class="tech-chip px-3 py-1">
                   {t}
                 </span>
               ))}
@@ -82,20 +82,20 @@ const projects = await getPortfolioProjects();
 
             <div class="mt-4 md:mt-6 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
               <div>
-                <div class="font-body text-xs uppercase text-[var(--color-muted)] mb-2">Output</div>
+                <div class="font-body text-xs uppercase tracking-caps text-[var(--color-muted)] mb-2">Output</div>
                 <div class="font-body text-sm text-[var(--color-accent)]">
                   {project.metric}
                 </div>
               </div>
 
-              <div class="flex gap-4 font-body text-sm">
+              <div class="flex gap-5 font-body text-sm">
                 <a
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="hover:text-[var(--color-accent)] transition-colors"
+                  class="arrow-link"
                 >
-                  -> github
+                  <span class="arrow" aria-hidden="true">→</span> github
                 </a>
 
                 {project.homepage && (
@@ -103,9 +103,9 @@ const projects = await getPortfolioProjects();
                     href={project.homepage}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hover:text-[var(--color-accent)] transition-colors"
+                    class="arrow-link"
                   >
-                    -> live
+                    <span class="arrow" aria-hidden="true">→</span> live
                   </a>
                 )}
               </div>
@@ -145,8 +145,8 @@ const projects = await getPortfolioProjects();
       }
     }
 
-    tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => activateProject(index));
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => activateProject(tabs.indexOf(tab)));
       tab.addEventListener('keydown', (event) => {
         const currentIndex = tabs.indexOf(tab);
         let nextIndex = currentIndex;
@@ -171,6 +171,7 @@ const projects = await getPortfolioProjects();
         }
 
         event.preventDefault();
+        event.stopPropagation();
         activateProject(nextIndex, true);
       });
     });

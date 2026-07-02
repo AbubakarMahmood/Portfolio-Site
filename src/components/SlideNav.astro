@@ -1,5 +1,5 @@
 ---
-// SlideNav component - Handles keyboard navigation between sections
+// SlideNav component - Handles keyboard/dot/top-bar navigation between sections
 ---
 
 <div id="slide-container" class="relative app-viewport w-full overflow-x-hidden">
@@ -7,24 +7,24 @@
 </div>
 
 <!-- Section Indicator -->
-<div class="fixed bottom-8 right-8 z-50 font-body text-sm hidden sm:block pointer-events-none">
+<div class="fixed bottom-8 right-8 z-50 font-body text-sm hidden lg:block pointer-events-none">
   <span id="current-section" class="text-[var(--color-accent)] text-2xl font-bold">01</span>
   <span class="text-[var(--color-muted)]"> / 04</span>
 </div>
 
 <!-- Navigation Dots -->
-<div class="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden sm:flex flex-col gap-4">
-  {[0, 1, 2, 3].map((i) => (
+<div class="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-4">
+  {['intro', 'work', 'stack', 'contact'].map((name, i) => (
     <button
       class="nav-dot w-2 h-2 rounded-full bg-[var(--color-muted)] hover:bg-[var(--color-accent)] transition-all duration-300"
       data-section={i}
-      aria-label={`Go to section ${i + 1}`}
+      aria-label={`Go to ${name}`}
     />
   ))}
 </div>
 
 <!-- Keyboard Hint -->
-<div class="fixed bottom-8 left-5 z-50 font-body text-xs text-[var(--color-muted)] hidden sm:flex gap-3">
+<div class="fixed bottom-8 left-5 z-50 font-body text-xs text-[var(--color-muted)] hidden lg:flex gap-3">
   <span>← →</span>
   <span>1-4</span>
   <span>ESC</span>
@@ -33,9 +33,11 @@
 <script>
   const sections = Array.from(document.querySelectorAll<HTMLElement>('.slide-section'));
   const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('.nav-dot'));
+  const jumps = Array.from(document.querySelectorAll<HTMLButtonElement>('.nav-jump[data-section]'));
   const scrollRoot = document.getElementById('slide-scroll');
-  let currentSection: number = 0;
-  const totalSections: number = sections.length || 4;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let currentSection = 0;
+  const totalSections = sections.length || 4;
 
   function setActiveSection(index: number) {
     if (index < 0 || index >= totalSections) return;
@@ -56,6 +58,12 @@
         dot.classList.add('bg-[var(--color-muted)]', 'h-2');
       }
     });
+
+    jumps.forEach((jump) => {
+      const target = Number.parseInt(jump.dataset.section ?? '-1', 10);
+      // The brand link (section 0) never shows an active state
+      jump.classList.toggle('is-active', target === index && target !== 0);
+    });
   }
 
   function updateSection(index: number) {
@@ -64,16 +72,22 @@
     const target = sections[index];
     if (!target) return;
 
+    const behavior: ScrollBehavior = reducedMotion.matches ? 'auto' : 'smooth';
     if (scrollRoot) {
-      scrollRoot.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+      scrollRoot.scrollTo({ top: target.offsetTop, behavior });
     } else {
-      target.scrollIntoView({ behavior: 'smooth' });
+      target.scrollIntoView({ behavior });
     }
   }
 
-  // Keyboard navigation
+  // Keyboard navigation — leave browser shortcuts (Ctrl/Cmd/Alt combos) and
+  // text inputs alone.
   document.addEventListener('keydown', (e) => {
-    switch(e.key) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const target = e.target as HTMLElement | null;
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+
+    switch (e.key) {
       case 'ArrowRight':
       case 'ArrowDown':
         e.preventDefault();
@@ -98,11 +112,18 @@
     }
   });
 
-  // Dot navigation
   dots.forEach((dot, index) => {
     dot.addEventListener('click', () => updateSection(index));
   });
 
+  jumps.forEach((jump) => {
+    jump.addEventListener('click', () => {
+      const index = Number.parseInt(jump.dataset.section ?? '-1', 10);
+      updateSection(index);
+    });
+  });
+
+  // Keep the indicator in sync with manual scrolling
   if (scrollRoot && sections.length > 0) {
     const observer = new IntersectionObserver((entries) => {
       const visibleEntry = entries
@@ -121,16 +142,36 @@
     sections.forEach((section) => observer.observe(section));
   }
 
-  setActiveSection(0);
+  // Scroll-triggered reveals
+  const revealables = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+  if (revealables.length > 0) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    revealables.forEach((el) => revealObserver.observe(el));
+  }
+
+  // Support deep links like /#work on load
+  const hashIndex = sections.findIndex((section) => section.id && `#${section.id}` === window.location.hash);
+  if (hashIndex > 0) {
+    const target = sections[hashIndex];
+    setActiveSection(hashIndex);
+    if (scrollRoot && target) {
+      scrollRoot.scrollTo({ top: target.offsetTop, behavior: 'auto' });
+    }
+  } else {
+    setActiveSection(0);
+  }
 </script>
 
 <style>
   .nav-dot {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .nav-dot.active {
-    background-color: var(--color-accent);
-    height: 2rem;
   }
 </style>
