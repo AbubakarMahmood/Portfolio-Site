@@ -86,7 +86,20 @@
       };
       scrollRoot.addEventListener('scrollend', resume, { once: true });
       snapResumeTimer = setTimeout(resume, 1200);
+      // Force a style flush so snap is actually off before the scroll starts;
+      // otherwise the animation begins under the old computed style and dies.
+      void scrollRoot.offsetHeight;
+      const startTop = scrollRoot.scrollTop;
       scrollRoot.scrollTo({ top: target.offsetTop, behavior });
+      // If the animation was swallowed (throttled tab, snap regression),
+      // land instantly rather than stranding the user.
+      setTimeout(() => {
+        const stalled = Math.abs(scrollRoot.scrollTop - startTop) < 2;
+        const notThere = Math.abs(scrollRoot.scrollTop - target.offsetTop) > 2;
+        if (stalled && notThere) {
+          scrollRoot.scrollTo({ top: target.offsetTop, behavior: 'auto' });
+        }
+      }, 500);
     } else {
       target.scrollIntoView({ behavior });
     }
