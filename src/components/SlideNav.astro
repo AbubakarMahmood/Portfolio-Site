@@ -66,6 +66,8 @@
     });
   }
 
+  let snapResumeTimer: ReturnType<typeof setTimeout> | undefined;
+
   function updateSection(index: number) {
     if (index < 0 || index >= totalSections) return;
     setActiveSection(index);
@@ -74,6 +76,16 @@
 
     const behavior: ScrollBehavior = reducedMotion.matches ? 'auto' : 'smooth';
     if (scrollRoot) {
+      // Suspend snapping for the duration of the programmatic scroll —
+      // mandatory snap otherwise cancels the smooth animation partway.
+      scrollRoot.classList.add('snap-suspend');
+      if (snapResumeTimer) clearTimeout(snapResumeTimer);
+      const resume = () => {
+        if (snapResumeTimer) clearTimeout(snapResumeTimer);
+        scrollRoot.classList.remove('snap-suspend');
+      };
+      scrollRoot.addEventListener('scrollend', resume, { once: true });
+      snapResumeTimer = setTimeout(resume, 1200);
       scrollRoot.scrollTo({ top: target.offsetTop, behavior });
     } else {
       target.scrollIntoView({ behavior });

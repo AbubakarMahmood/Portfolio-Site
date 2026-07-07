@@ -108,6 +108,12 @@
     scrollbar-color: var(--color-accent-dim) transparent;
   }
 
+  /* Programmatic navigation suspends snapping while the smooth scroll runs;
+     mandatory snap otherwise cancels scrollTo() mid-flight in Chrome. */
+  .slide-scroll.snap-suspend {
+    scroll-snap-type: none !important;
+  }
+
   .slide-section {
     min-height: 100vh;
     min-height: 100dvh;
