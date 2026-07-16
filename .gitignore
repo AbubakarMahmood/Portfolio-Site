@@ -29,4 +29,5 @@ pnpm-debug.log*
 .astro/
 
 # claude code local config
-.claude/
+.claude/*
+!.claude/settings.json
