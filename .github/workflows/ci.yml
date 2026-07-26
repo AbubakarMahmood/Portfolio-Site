@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -37,8 +39,6 @@ jobs:
 
       - name: Type-check and build
         run: npm run build
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Run browser resilience checks
         run: npm run test:e2e
