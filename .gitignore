@@ -32,6 +32,5 @@ pnpm-debug.log*
 playwright-report/
 test-results/
 
-# claude code local config
-.claude/*
-!.claude/settings.json
+# local AI tool configuration
+.claude/
