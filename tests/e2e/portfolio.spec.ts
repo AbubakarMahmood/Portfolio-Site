@@ -291,7 +291,21 @@ test.describe('progressive enhancement', () => {
       };
     });
     await page.goto('/');
-    await page.waitForTimeout(100);
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const testWindow = window as Window & {
+            __portfolioScrollCalls?: Array<{
+              top: number;
+              behavior: ScrollBehavior | undefined;
+            }>;
+          };
+          return (testWindow.__portfolioScrollCalls ?? []).some(
+            (call) => call.behavior === 'auto'
+          );
+        })
+      )
+      .toBe(true);
 
     await page.evaluate(() => {
       const testWindow = window as Window & {
