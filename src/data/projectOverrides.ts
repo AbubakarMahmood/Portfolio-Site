@@ -2,15 +2,18 @@ export interface ProjectOverride {
   repo: string;
   title: string;
   description: string;
-  tech: string[];
-  metric: string;
+  tech: readonly string[];
+  highlight: string;
   order: number;
   featured?: boolean;
   githubUrl?: string;
   homepage?: string;
+  repositoryNote?: string;
+  repositoryLinkLabel?: string;
+  repositoryLinkAriaLabel?: string;
 }
 
-export const curatedProjects: ProjectOverride[] = [
+export const curatedProjects = [
   {
     repo: 'pak_connect',
     order: 1,
@@ -18,7 +21,8 @@ export const curatedProjects: ProjectOverride[] = [
     description:
       'Off-grid peer-to-peer messaging prototype with BLE discovery, secure sessions, encrypted archives, offline queues, and custom relay/routing design.',
     tech: ['Flutter', 'Dart', 'BLE', 'SQLCipher'],
-    metric: 'Offline-first secure messaging'
+    highlight: 'Offline-first secure messaging',
+    githubUrl: 'https://github.com/AbubakarMahmood/pak_connect'
   },
   {
     repo: 'Incident-SLA-Tracker',
@@ -27,7 +31,8 @@ export const curatedProjects: ProjectOverride[] = [
     description:
       'Incident-management API with JWT auth, priority-based SLA assignment, scheduled breach workers, migrations, and service-layer tests.',
     tech: ['FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
-    metric: 'Observability + CI'
+    highlight: 'Observability + CI',
+    githubUrl: 'https://github.com/AbubakarMahmood/Incident-SLA-Tracker'
   },
   {
     repo: 'salahsync',
@@ -36,7 +41,12 @@ export const curatedProjects: ProjectOverride[] = [
     description:
       'Offline-first prayer-time and mosque Jamaat scheduler with local persistence, timing-rule resolution, backup/import, Qibla tools, widgets, and tests.',
     tech: ['Flutter', 'Drift', 'SQLite', 'Riverpod'],
-    metric: 'Local-first mobile utility'
+    highlight: 'Local-first mobile utility',
+    githubUrl: 'https://github.com/AbubakarMahmood/salahsync-support',
+    repositoryNote: 'Source repository is private; public support and release information is available.',
+    repositoryLinkLabel: 'support',
+    repositoryLinkAriaLabel:
+      'SalahSync public support and release repository on GitHub (opens in a new tab)'
   },
   {
     repo: 'Unified-Public-Data',
@@ -45,7 +55,8 @@ export const curatedProjects: ProjectOverride[] = [
     description:
       'GraphQL gateway that federates public REST APIs with caching, DataLoader batching, persisted queries, rate limits, subscriptions, tests, and Docker config.',
     tech: ['TypeScript', 'Apollo Server', 'GraphQL'],
-    metric: 'Public API federation'
+    highlight: 'Public API federation',
+    githubUrl: 'https://github.com/AbubakarMahmood/Unified-Public-Data'
   },
   {
     repo: 'PERDS',
@@ -54,6 +65,7 @@ export const curatedProjects: ProjectOverride[] = [
     description:
       'Emergency-response simulator using dynamic weighted graphs, Dijkstra/A* routing, custom indexed heap, CSV scenarios, and JUnit-tested dispatch logic.',
     tech: ['Java 21', 'Maven', 'JUnit', 'Graphs'],
-    metric: 'Reproducible routing metrics'
+    highlight: 'Reproducible routing metrics',
+    githubUrl: 'https://github.com/AbubakarMahmood/PERDS'
   }
-];
+] as const satisfies readonly ProjectOverride[];

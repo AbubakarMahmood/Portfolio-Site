@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -17,20 +15,32 @@
   }
 
   html {
-    font-family: var(--font-body);
+    min-height: 100%;
+    overflow-x: hidden;
     background: var(--color-bg);
     color: var(--color-text);
     color-scheme: dark;
-    overflow: hidden;
+    font-family: var(--font-body);
     -webkit-text-size-adjust: 100%;
   }
 
   body {
+    min-height: 100vh;
+    min-height: 100dvh;
     background: transparent;
     font-weight: 300;
+    isolation: isolate;
   }
 
-  /* Atmosphere: faint dot grid + accent glow bleeding from the top */
+  /* JavaScript enhances the page into a self-contained scroll deck. Without it,
+     the document remains an ordinary, fully scrollable page. */
+  html.js,
+  html.js body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Atmosphere: faint dot grid + accent glow bleeding from the top. */
   body::before {
     content: '';
     position: fixed;
@@ -43,7 +53,12 @@
     background-size: auto, 26px 26px;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-heading);
     font-weight: 700;
     line-height: 0.95;
@@ -56,23 +71,11 @@
   }
 
   *:focus-visible {
+    border-radius: 1px;
     outline: 2px solid var(--color-accent);
     outline-offset: 4px;
-    border-radius: 1px;
   }
 
-  /* The slide deck owns scrolling; use dynamic viewport units for mobile browser chrome. */
-  html, body {
-    height: 100%;
-    overflow: hidden;
-  }
-
-  body {
-    min-height: 100vh;
-    min-height: 100dvh;
-  }
-
-  /* Terminal cursor effect */
   @keyframes blink {
     0%, 49% { opacity: 1; }
     50%, 100% { opacity: 0; }
@@ -88,28 +91,82 @@
     *,
     *::before,
     *::after {
+      scroll-behavior: auto !important;
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    :root {
+      --color-muted: #a9b4bb;
+      --color-line: rgba(169, 180, 187, 0.42);
     }
   }
 }
 
 @layer components {
+  .nav-js-only,
+  .copy-control {
+    display: none !important;
+  }
+
+  html.js .copy-control.is-enhanced {
+    display: inline-flex !important;
+  }
+
+  @media (min-width: 1024px) {
+    html.nav-enhanced .nav-indicator {
+      display: block !important;
+    }
+
+    html.nav-enhanced .nav-hint {
+      display: flex !important;
+    }
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    transform: translateY(-180%);
+    border: 1px solid var(--color-accent);
+    background: var(--color-bg);
+    padding: 0.65rem 0.9rem;
+    color: var(--color-text);
+    font: 0.75rem/1.2 var(--font-body);
+    transition: transform 0.2s ease;
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
   .app-viewport {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  html.js .app-viewport {
     height: 100vh;
     height: 100dvh;
+    min-height: 0;
   }
 
   .slide-scroll {
+    overflow: visible;
+  }
+
+  html.js .slide-scroll {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
     scrollbar-width: thin;
     scrollbar-color: var(--color-accent-dim) transparent;
   }
 
-  /* Programmatic navigation suspends snapping while the smooth scroll runs;
-     mandatory snap otherwise cancels scrollTo() mid-flight in Chrome. */
   .slide-scroll.snap-suspend {
     scroll-snap-type: none !important;
   }
@@ -117,8 +174,18 @@
   .slide-section {
     min-height: 100vh;
     min-height: 100dvh;
+    scroll-margin-top: 3.5rem;
+  }
+
+  html.js .slide-section {
     scroll-snap-align: start;
     scroll-snap-stop: normal;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js .slide-scroll {
+      scroll-snap-type: none;
+    }
   }
 
   .safe-link {
@@ -128,10 +195,10 @@
 
   /* Top bar */
   .top-bar {
-    background: rgba(6, 8, 9, 0.72);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-line);
+    background: rgba(6, 8, 9, 0.82);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
   .nav-jump {
@@ -143,9 +210,9 @@
   .nav-jump::after {
     content: '';
     position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 100%;
+    bottom: 0.35rem;
+    left: 0.25rem;
+    width: calc(100% - 0.5rem);
     height: 1px;
     background: var(--color-accent);
     transform: scaleX(0);
@@ -164,8 +231,40 @@
     transform: scaleX(1);
   }
 
-  /* Scroll-triggered reveal */
+  /* The entire pointer target is 32px; the visual marker stays intentionally small. */
+  .nav-dot {
+    color: var(--color-muted);
+  }
+
+  .nav-dot-marker {
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: currentColor;
+    transition:
+      height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.25s ease;
+  }
+
+  .nav-dot:hover,
+  .nav-dot:focus-visible,
+  .nav-dot.is-active {
+    color: var(--color-accent);
+  }
+
+  .nav-dot.is-active .nav-dot-marker {
+    height: 1.5rem;
+  }
+
+  /* Content is visible by default. Reveal effects activate only after JS has
+     successfully created its observer. */
   .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  html.reveal-enabled .reveal {
     opacity: 0;
     transform: translateY(18px);
     transition:
@@ -174,28 +273,27 @@
     transition-delay: var(--reveal-delay, 0s);
   }
 
-  .reveal.is-visible {
+  html.reveal-enabled .reveal.is-visible {
     opacity: 1;
     transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal {
+    .reveal,
+    html.reveal-enabled .reveal {
       opacity: 1;
       transform: none;
       transition: none;
     }
   }
 
-  /* Typing caret shown while the hero command types out */
   .type-caret::after {
     content: '▋';
-    color: var(--color-accent);
-    animation: blink 1s step-end infinite;
     margin-left: 1px;
+    animation: blink 1s step-end infinite;
+    color: var(--color-accent);
   }
 
-  /* Availability pulse */
   .status-dot {
     width: 8px;
     height: 8px;
@@ -211,7 +309,6 @@
     100% { box-shadow: 0 0 0 0 rgba(0, 229, 199, 0); }
   }
 
-  /* Info blocks (hero grid, contact rows) */
   .info-block {
     border-left: 2px solid var(--color-line);
     transition: border-color 0.3s ease;
@@ -222,7 +319,6 @@
     border-color: var(--color-accent);
   }
 
-  /* Arrow links: the arrow nudges right on hover */
   .arrow-link {
     display: inline-flex;
     align-items: baseline;
@@ -247,14 +343,18 @@
 
   /* Project deck */
   .project-rail {
-    scrollbar-color: var(--color-accent-dim) transparent;
     scrollbar-width: thin;
+    scrollbar-color: var(--color-accent-dim) transparent;
   }
 
   .project-tab {
     border-color: var(--color-line);
     color: var(--color-muted);
-    transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+    transition:
+      border-color 0.3s ease,
+      background 0.3s ease,
+      color 0.3s ease;
   }
 
   .project-tab:hover,
@@ -279,11 +379,22 @@
   }
 
   .project-panel {
+    scroll-margin-top: 4rem;
+  }
+
+  .project-deck.is-enhanced .project-panel.is-active {
     animation: panelIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  .project-deck.is-enhanced .project-panel:not(.is-active),
   .project-panel[hidden] {
     display: none;
+  }
+
+  .project-deck:not(.is-enhanced) .project-panel + .project-panel {
+    margin-top: 3rem;
+    border-top: 1px solid var(--color-line);
+    padding-top: 3rem;
   }
 
   @keyframes panelIn {
@@ -300,25 +411,12 @@
   .tech-chip {
     border: 1px solid var(--color-line);
     color: var(--color-muted);
-    transition: border-color 0.25s ease, color 0.25s ease;
   }
 
-  .tech-chip:hover {
-    border-color: var(--color-accent-dim);
+  .skill-item {
     color: var(--color-text);
   }
 
-  /* Skills */
-  .skill-item {
-    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .skill-item:hover {
-    color: var(--color-accent);
-    transform: translateX(4px);
-  }
-
-  /* Scroll hint bounce */
   @keyframes softBounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(6px); }
@@ -326,16 +424,6 @@
 
   .scroll-hint {
     animation: softBounce 2.2s ease-in-out infinite;
-  }
-
-  @media (min-width: 768px) {
-    .slide-scroll {
-      scroll-snap-type: y mandatory;
-    }
-
-    .slide-section {
-      scroll-snap-stop: always;
-    }
   }
 }
 
@@ -354,5 +442,77 @@
 
   .tracking-caps {
     letter-spacing: 0.14em;
+  }
+}
+
+@media print {
+  html,
+  html.js,
+  html.js body,
+  body {
+    height: auto;
+    overflow: visible;
+    background: #fff;
+    color: #000;
+  }
+
+  body::before,
+  .top-bar,
+  .skip-link,
+  .nav-dot,
+  .nav-js-only,
+  .copy-control,
+  .project-rail,
+  .scroll-hint {
+    display: none !important;
+  }
+
+  .project-deck {
+    display: block;
+  }
+
+  .app-viewport,
+  html.js .app-viewport,
+  .slide-scroll,
+  html.js .slide-scroll,
+  .slide-section {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .slide-section {
+    break-inside: avoid;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .reveal,
+  html.reveal-enabled .reveal,
+  .project-panel,
+  .project-deck.is-enhanced .project-panel:not(.is-active) {
+    display: block !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .project-panel + .project-panel {
+    margin-top: 2rem;
+    border-top: 1px solid #bbb;
+    padding-top: 2rem;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+@layer base {
+  @media print {
+    [data-project-panel][hidden] {
+      display: block !important;
+    }
   }
 }

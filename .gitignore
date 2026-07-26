@@ -28,6 +28,10 @@ pnpm-debug.log*
 # astro generated types
 .astro/
 
+# browser test artifacts
+playwright-report/
+test-results/
+
 # claude code local config
 .claude/*
 !.claude/settings.json

@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout
+  title={`404 - Page not found | ${site.name}`}
+  description="The requested page could not be found."
+  noindex
+>
+  <main id="main-content" class="flex min-h-screen items-center justify-center px-6 py-16" tabindex="-1">
+    <div class="w-full max-w-3xl border-l-2 border-[var(--color-accent)] pl-6 md:pl-10">
+      <div class="mb-4 font-body text-sm text-[var(--color-muted)]">
+        <span class="text-[var(--color-accent)]">$</span> cat ./404.log
+      </div>
+      <p class="mb-3 font-body text-xs uppercase tracking-caps text-[var(--color-accent)]">404 · not found</p>
+      <h1 class="mb-6 font-heading text-5xl sm:text-7xl">PAGE<br/>MISSING</h1>
+      <p class="mb-8 max-w-xl font-body text-sm leading-7 text-[var(--color-muted)]">
+        The route does not exist or has moved. Return to the portfolio homepage to continue.
+      </p>
+      <a href="/" class="arrow-link font-body text-base">
+        <span class="arrow" aria-hidden="true">→</span> return home
+      </a>
+    </div>
+  </main>
+</BaseLayout>

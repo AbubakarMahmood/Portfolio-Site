@@ -1,32 +1,52 @@
 ---
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
+import { site } from '../config/site';
 import '../styles/global.css';
 
 interface Props {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImage = new URL('/og.png', Astro.site);
+const {
+  title = site.title,
+  description = site.description,
+  noindex = false
+} = Astro.props;
 
-const personSchema = {
+const siteURL = Astro.site ?? new URL(site.url);
+const canonicalURL = new URL(Astro.url.pathname, siteURL);
+const ogImage = new URL('/og.png', siteURL);
+const personId = new URL('/#person', siteURL).toString();
+
+const structuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Abubakar Mahmood',
-  url: Astro.site?.toString(),
-  jobTitle: 'Software Engineer',
-  email: 'mailto:theabubakar321@gmail.com',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Lahore',
-    addressCountry: 'PK'
-  },
-  sameAs: [
-    'https://github.com/AbubakarMahmood',
-    'https://linkedin.com/in/abubakar-mahmood'
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: site.name,
+      url: siteURL.toString(),
+      jobTitle: site.role,
+      email: `mailto:${site.email}`,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: site.location.city,
+        addressCountry: site.location.countryCode
+      },
+      sameAs: [site.socials.github.url, site.socials.linkedin.url]
+    },
+    {
+      '@type': 'WebSite',
+      '@id': new URL('/#website', siteURL).toString(),
+      url: siteURL.toString(),
+      name: `${site.name} Portfolio`,
+      description: site.description,
+      inLanguage: 'en',
+      publisher: { '@id': personId }
+    }
   ]
 };
 ---
@@ -39,30 +59,38 @@ const personSchema = {
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#060809" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalURL} />
+
+    <!-- Synchronous, same-origin bootstrap: progressive enhancement without an inline executable script. -->
+    <script is:inline src="/js/init.js"></script>
 
     <!-- Open Graph / Twitter -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:site_name" content="Abubakar Mahmood" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} - ${site.role}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={`${site.name} - ${site.role}`} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{title}</title>
 
-    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   </head>
-  <body class="text-[var(--color-text)] overflow-hidden">
+  <body class="text-[var(--color-text)]">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <slot />
   </body>
 </html>

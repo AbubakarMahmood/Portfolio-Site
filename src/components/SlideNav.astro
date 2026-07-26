@@ -1,46 +1,77 @@
 ---
-// SlideNav component - Handles keyboard/dot/top-bar navigation between sections
+import { site } from '../config/site';
+
+const sectionDefinitions = site.sections;
+const totalLabel = String(sectionDefinitions.length).padStart(2, '0');
 ---
 
 <div id="slide-container" class="relative app-viewport w-full overflow-x-hidden">
   <slot />
 </div>
 
-<!-- Section Indicator -->
-<div class="fixed bottom-8 right-8 z-50 font-body text-sm hidden lg:block pointer-events-none">
-  <span id="current-section" class="text-[var(--color-accent)] text-2xl font-bold">01</span>
-  <span class="text-[var(--color-muted)]"> / 04</span>
+<!-- Section indicator -->
+<div class="nav-js-only nav-indicator pointer-events-none fixed bottom-8 right-8 z-50 font-body text-sm" aria-hidden="true">
+  <span id="current-section" class="text-2xl font-bold text-[var(--color-accent)]">01</span>
+  <span class="text-[var(--color-muted)]"> / {totalLabel}</span>
 </div>
 
-<!-- Navigation Dots -->
-<div class="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-4">
-  {['intro', 'work', 'stack', 'contact'].map((name, i) => (
-    <button
-      class="nav-dot w-2 h-2 rounded-full bg-[var(--color-muted)] hover:bg-[var(--color-accent)] transition-all duration-300"
-      data-section={i}
-      aria-label={`Go to ${name}`}
-    />
+<!-- Navigation dots remain useful as ordinary hash links without JavaScript. -->
+<nav class="fixed left-6 top-1/2 z-50 hidden -translate-y-1/2 flex-col gap-1 lg:flex" aria-label="Section shortcuts">
+  {sectionDefinitions.map((section, index) => (
+    <a
+      href={`#${section.id}`}
+      class="nav-dot flex h-8 w-8 items-center justify-center rounded-full"
+      data-section={index}
+      aria-label={`Go to ${section.label}`}
+    >
+      <span class="nav-dot-marker" aria-hidden="true"></span>
+    </a>
   ))}
-</div>
+</nav>
 
-<!-- Keyboard Hint -->
-<div class="fixed bottom-8 left-5 z-50 font-body text-xs text-[var(--color-muted)] hidden lg:flex gap-3">
-  <span>← →</span>
-  <span>1-4</span>
+<!-- Keyboard hint -->
+<div class="nav-js-only nav-hint fixed bottom-8 left-5 z-50 gap-3 font-body text-xs text-[var(--color-muted)]" aria-hidden="true">
+  <span>arrow keys</span>
   <span>ESC</span>
 </div>
 
 <script>
-  const sections = Array.from(document.querySelectorAll<HTMLElement>('.slide-section'));
-  const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('.nav-dot'));
-  const jumps = Array.from(document.querySelectorAll<HTMLButtonElement>('.nav-jump[data-section]'));
-  const scrollRoot = document.getElementById('slide-scroll');
+  // The head bootstrap sets this before paint; this is a resilient fallback if that file is stale or missing.
+  document.documentElement.classList.add('js');
+
+  type HistoryMode = 'push' | 'replace' | 'none';
+
+  const sectionElements = Array.from(document.querySelectorAll<HTMLElement>('.slide-section'));
+  const dots = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-dot[data-section]'));
+  const jumps = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-jump[data-section]'));
+  const scrollRoot = document.querySelector<HTMLElement>('[data-scroll-root]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const interactiveSelector = [
+    'a[href]',
+    'button',
+    'input',
+    'textarea',
+    'select',
+    'summary',
+    '[contenteditable]:not([contenteditable="false"])',
+    '[role="button"]',
+    '[role="tab"]',
+    '[role="link"]',
+    '[role="menuitem"]',
+    '[role="option"]',
+    '[role="slider"]',
+    '[role="spinbutton"]',
+    '[role="switch"]',
+    '[role="textbox"]'
+  ].join(',');
+
   let currentSection = 0;
-  const totalSections = sections.length || 4;
+  let snapResumeTimer: number | undefined;
+  let scrollFallbackTimer: number | undefined;
+  let scrollRequestId = 0;
 
   function setActiveSection(index: number) {
-    if (index < 0 || index >= totalSections) return;
+    if (index < 0 || index >= sectionElements.length) return;
 
     currentSection = index;
 
@@ -49,154 +80,224 @@
       indicator.textContent = String(index + 1).padStart(2, '0');
     }
 
-    dots.forEach((dot, i) => {
-      if (i === index) {
-        dot.classList.add('bg-[var(--color-accent)]', 'h-8');
-        dot.classList.remove('bg-[var(--color-muted)]', 'h-2');
+    dots.forEach((dot, dotIndex) => {
+      const isActive = dotIndex === index;
+      dot.classList.toggle('is-active', isActive);
+      if (isActive) {
+        dot.setAttribute('aria-current', 'location');
       } else {
-        dot.classList.remove('bg-[var(--color-accent)]', 'h-8');
-        dot.classList.add('bg-[var(--color-muted)]', 'h-2');
+        dot.removeAttribute('aria-current');
       }
     });
 
     jumps.forEach((jump) => {
-      const target = Number.parseInt(jump.dataset.section ?? '-1', 10);
-      // The brand link (section 0) never shows an active state
-      jump.classList.toggle('is-active', target === index && target !== 0);
+      const targetIndex = Number.parseInt(jump.dataset.section ?? '-1', 10);
+      const isActive = targetIndex === index;
+      // Keep the brand visually neutral while still exposing its current state.
+      jump.classList.toggle('is-active', isActive && targetIndex !== 0);
+      if (isActive) {
+        jump.setAttribute('aria-current', 'location');
+      } else {
+        jump.removeAttribute('aria-current');
+      }
     });
   }
 
-  let snapResumeTimer: ReturnType<typeof setTimeout> | undefined;
+  function sectionURL(index: number) {
+    const base = `${window.location.pathname}${window.location.search}`;
+    const id = sectionElements[index]?.id;
+    return index === 0 || !id ? base : `${base}#${encodeURIComponent(id)}`;
+  }
 
-  function updateSection(index: number) {
-    if (index < 0 || index >= totalSections) return;
-    setActiveSection(index);
-    const target = sections[index];
+  function writeHistory(index: number, mode: Exclude<HistoryMode, 'none'>) {
+    const nextURL = sectionURL(index);
+    const currentURL = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextURL === currentURL) return;
+
+    if (mode === 'push') {
+      window.history.pushState(null, '', nextURL);
+    } else {
+      window.history.replaceState(null, '', nextURL);
+    }
+  }
+
+  function suspendSnap() {
+    if (!scrollRoot || reducedMotion.matches) return;
+
+    scrollRoot.classList.add('snap-suspend');
+    if (snapResumeTimer) window.clearTimeout(snapResumeTimer);
+
+    const resume = () => {
+      if (snapResumeTimer) window.clearTimeout(snapResumeTimer);
+      snapResumeTimer = undefined;
+      scrollRoot.classList.remove('snap-suspend');
+    };
+
+    if ('onscrollend' in scrollRoot) {
+      scrollRoot.addEventListener('scrollend', resume, { once: true });
+    }
+    snapResumeTimer = window.setTimeout(resume, 1200);
+  }
+
+  function scrollToSection(index: number, behavior: ScrollBehavior) {
+    const target = sectionElements[index];
     if (!target) return;
 
-    const behavior: ScrollBehavior = reducedMotion.matches ? 'auto' : 'smooth';
-    if (scrollRoot) {
-      // Suspend snapping for the duration of the programmatic scroll —
-      // mandatory snap otherwise cancels the smooth animation partway.
-      scrollRoot.classList.add('snap-suspend');
-      if (snapResumeTimer) clearTimeout(snapResumeTimer);
-      const resume = () => {
-        if (snapResumeTimer) clearTimeout(snapResumeTimer);
-        scrollRoot.classList.remove('snap-suspend');
-      };
-      scrollRoot.addEventListener('scrollend', resume, { once: true });
-      snapResumeTimer = setTimeout(resume, 1200);
-      // Force a style flush so snap is actually off before the scroll starts;
-      // otherwise the animation begins under the old computed style and dies.
-      void scrollRoot.offsetHeight;
-      const startTop = scrollRoot.scrollTop;
-      scrollRoot.scrollTo({ top: target.offsetTop, behavior });
-      // If the animation was swallowed (throttled tab, snap regression),
-      // land instantly rather than stranding the user.
-      setTimeout(() => {
+    const requestId = ++scrollRequestId;
+    if (scrollFallbackTimer) {
+      window.clearTimeout(scrollFallbackTimer);
+      scrollFallbackTimer = undefined;
+    }
+
+    if (!scrollRoot) {
+      target.scrollIntoView({ behavior, block: 'start' });
+      return;
+    }
+
+    suspendSnap();
+    // Flush the snap-state change before starting a smooth scroll.
+    void scrollRoot.offsetHeight;
+    const startTop = scrollRoot.scrollTop;
+    scrollRoot.scrollTo({ top: target.offsetTop, behavior });
+
+    if (behavior === 'smooth') {
+      scrollFallbackTimer = window.setTimeout(() => {
+        scrollFallbackTimer = undefined;
+        if (requestId !== scrollRequestId) return;
+
         const stalled = Math.abs(scrollRoot.scrollTop - startTop) < 2;
         const notThere = Math.abs(scrollRoot.scrollTop - target.offsetTop) > 2;
         if (stalled && notThere) {
           scrollRoot.scrollTo({ top: target.offsetTop, behavior: 'auto' });
         }
       }, 500);
-    } else {
-      target.scrollIntoView({ behavior });
     }
   }
 
-  // Keyboard navigation — leave browser shortcuts (Ctrl/Cmd/Alt combos) and
-  // text inputs alone.
-  document.addEventListener('keydown', (e) => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    const target = e.target as HTMLElement | null;
-    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+  function updateSection(index: number, historyMode: HistoryMode = 'push') {
+    if (index < 0 || index >= sectionElements.length) return;
 
-    switch (e.key) {
+    setActiveSection(index);
+    if (historyMode !== 'none') writeHistory(index, historyMode);
+    scrollToSection(index, reducedMotion.matches ? 'auto' : 'smooth');
+  }
+
+  function targetIsInteractive(target: EventTarget | null) {
+    return target instanceof Element && Boolean(target.closest(interactiveSelector));
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (
+      event.defaultPrevented ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.altKey ||
+      event.shiftKey ||
+      targetIsInteractive(event.target)
+    ) {
+      return;
+    }
+
+    let nextIndex: number | undefined;
+    switch (event.key) {
       case 'ArrowRight':
       case 'ArrowDown':
-        e.preventDefault();
-        updateSection(currentSection + 1);
+        nextIndex = currentSection + 1;
         break;
       case 'ArrowLeft':
       case 'ArrowUp':
-        e.preventDefault();
-        updateSection(currentSection - 1);
-        break;
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-        e.preventDefault();
-        updateSection(Number.parseInt(e.key, 10) - 1);
+        nextIndex = currentSection - 1;
         break;
       case 'Escape':
-        e.preventDefault();
-        updateSection(0);
+        nextIndex = 0;
         break;
+      default:
+        return;
     }
+
+    if (nextIndex < 0 || nextIndex >= sectionElements.length || nextIndex === currentSection) return;
+    event.preventDefault();
+    updateSection(nextIndex);
   });
 
-  dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => updateSection(index));
-  });
-
-  jumps.forEach((jump) => {
-    jump.addEventListener('click', () => {
-      const index = Number.parseInt(jump.dataset.section ?? '-1', 10);
+  [...dots, ...jumps].forEach((control) => {
+    control.addEventListener('click', (event) => {
+      const index = Number.parseInt(control.dataset.section ?? '-1', 10);
+      if (index < 0 || index >= sectionElements.length || !scrollRoot) return;
+      event.preventDefault();
       updateSection(index);
     });
   });
 
-  // Keep the indicator in sync with manual scrolling
-  if (scrollRoot && sections.length > 0) {
-    const observer = new IntersectionObserver((entries) => {
+  // Keep controls and the URL synchronized with manual scrolling.
+  if ('IntersectionObserver' in window && scrollRoot && sectionElements.length > 0) {
+    const sectionObserver = new IntersectionObserver((entries) => {
       const visibleEntry = entries
         .filter((entry) => entry.isIntersecting)
         .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
 
       if (!visibleEntry) return;
-
-      const visibleIndex = sections.indexOf(visibleEntry.target as HTMLElement);
+      const visibleIndex = sectionElements.indexOf(visibleEntry.target as HTMLElement);
+      if (visibleIndex < 0) return;
       setActiveSection(visibleIndex);
+      writeHistory(visibleIndex, 'replace');
     }, {
       root: scrollRoot,
       threshold: [0.35, 0.6]
     });
 
-    sections.forEach((section) => observer.observe(section));
+    sectionElements.forEach((section) => sectionObserver.observe(section));
   }
 
-  // Scroll-triggered reveals
+  // Enhance reveal effects only after the observer is ready. The baseline is visible.
   const revealables = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-  if (revealables.length > 0) {
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+  if (revealables.length > 0 && !reducedMotion.matches && 'IntersectionObserver' in window) {
+    try {
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
           entry.target.classList.add('is-visible');
           revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
+        });
+      }, { root: scrollRoot, threshold: 0.15 });
 
-    revealables.forEach((el) => revealObserver.observe(el));
-  }
-
-  // Support deep links like /#work on load
-  const hashIndex = sections.findIndex((section) => section.id && `#${section.id}` === window.location.hash);
-  if (hashIndex > 0) {
-    const target = sections[hashIndex];
-    setActiveSection(hashIndex);
-    if (scrollRoot && target) {
-      scrollRoot.scrollTo({ top: target.offsetTop, behavior: 'auto' });
+      document.documentElement.classList.add('reveal-enabled');
+      revealables.forEach((element) => revealObserver.observe(element));
+    } catch {
+      document.documentElement.classList.remove('reveal-enabled');
+      revealables.forEach((element) => element.classList.add('is-visible'));
     }
   } else {
-    setActiveSection(0);
+    revealables.forEach((element) => element.classList.add('is-visible'));
   }
-</script>
 
-<style>
-  .nav-dot {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  function sectionIndexFromHash() {
+    if (!window.location.hash) return 0;
+
+    let id = window.location.hash.slice(1);
+    try {
+      id = decodeURIComponent(id);
+    } catch {
+      return 0;
+    }
+
+    const directIndex = sectionElements.findIndex((section) => section.id === id);
+    if (directIndex >= 0) return directIndex;
+
+    const nestedTarget = document.getElementById(id);
+    const parentSection = nestedTarget?.closest<HTMLElement>('.slide-section');
+    return parentSection ? sectionElements.indexOf(parentSection) : 0;
   }
-</style>
+
+  function syncFromLocation() {
+    const index = sectionIndexFromHash();
+    if (index < 0) return;
+    setActiveSection(index);
+    window.requestAnimationFrame(() => scrollToSection(index, 'auto'));
+  }
+
+  window.addEventListener('popstate', syncFromLocation);
+  window.addEventListener('hashchange', syncFromLocation);
+  document.documentElement.classList.add('nav-enhanced');
+  syncFromLocation();
+</script>

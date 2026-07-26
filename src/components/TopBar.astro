@@ -1,37 +1,36 @@
 ---
-const links = [
-  { label: 'work', section: 1 },
-  { label: 'stack', section: 2 },
-  { label: 'contact', section: 3 }
-];
+import { site } from '../config/site';
+
+const links = site.sections.slice(1);
 ---
 
 <header class="top-bar fixed inset-x-0 top-0 z-50">
   <div class="mx-auto flex h-12 max-w-7xl items-center justify-between px-4 md:h-14 md:px-16">
-    <button
-      type="button"
-      class="nav-jump font-body text-sm"
+    <a
+      href={`#${site.sections[0].id}`}
+      class="nav-jump inline-flex min-h-11 items-center px-1 font-body text-sm"
       data-section="0"
-      aria-label="Back to top"
+      aria-label="Back to introduction"
     >
-      <span class="text-[var(--color-accent)]">~/</span><span class="hidden sm:inline">abubakar-mahmood</span><span class="sm:hidden">am</span>
-    </button>
+      <span class="text-[var(--color-accent)]">~/</span><span class="hidden sm:inline">abubakar-mahmood</span><span class="sm:hidden">{site.shortName}</span>
+    </a>
 
-    <nav class="flex items-center gap-5 md:gap-8" aria-label="Sections">
-      {links.map(({ label, section }) => (
-        <button
-          type="button"
-          class="nav-jump font-body text-xs uppercase tracking-caps"
-          data-section={section}
+    <nav class="flex items-center gap-2 sm:gap-4 md:gap-6" aria-label="Sections">
+      {links.map((section, index) => (
+        <a
+          href={`#${section.id}`}
+          class="nav-jump inline-flex min-h-11 items-center px-1 font-body text-xs uppercase tracking-caps"
+          data-section={index + 1}
         >
-          {label}
-        </button>
+          {section.label}
+        </a>
       ))}
       <a
-        href="https://github.com/AbubakarMahmood"
+        href={site.socials.github.url}
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden font-body text-xs uppercase tracking-caps text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)] md:inline"
+        aria-label="GitHub profile (opens in a new tab)"
+        class="hidden min-h-11 items-center px-1 font-body text-xs uppercase tracking-caps text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)] md:inline-flex"
       >
         github ↗
       </a>

@@ -6,15 +6,18 @@ import Hero from '../components/Hero.astro';
 import Projects from '../components/Projects.astro';
 import Skills from '../components/Skills.astro';
 import Contact from '../components/Contact.astro';
+import { site } from '../config/site';
 ---
 
-<BaseLayout
-  title="Abubakar Mahmood - Junior Software Engineer"
-  description="Junior Software Engineer in Lahore focused on Flutter, backend APIs, offline-first systems, and practical production-minded software."
->
+<BaseLayout title={site.title} description={site.description}>
   <TopBar />
   <SlideNav>
-    <main id="slide-scroll" class="slide-scroll app-viewport w-full overflow-y-auto overflow-x-hidden">
+    <main
+      id="main-content"
+      class="slide-scroll app-viewport w-full overflow-x-hidden"
+      data-scroll-root
+      tabindex="-1"
+    >
       <Hero />
       <Projects />
       <Skills />

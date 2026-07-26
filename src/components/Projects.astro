@@ -4,125 +4,158 @@ import { getPortfolioProjects } from '../lib/projects';
 const projects = await getPortfolioProjects();
 ---
 
-<section id="work" class="slide-section w-full flex items-center justify-center relative px-6 md:px-16 py-6 sm:py-14 md:py-20">
-  <div class="max-w-7xl w-full">
+<section id="work" class="slide-section relative flex w-full items-center justify-center px-6 py-6 sm:py-14 md:px-16 md:py-20">
+  <div class="w-full max-w-7xl">
     <div class="mb-4 md:mb-12">
-      <div class="reveal font-body text-sm text-[var(--color-muted)] mb-3 md:mb-4">
+      <div class="reveal mb-3 font-body text-sm text-[var(--color-muted)] md:mb-4">
         <span class="text-[var(--color-accent)]">$</span> ls -la ./projects
       </div>
-      <h2 class="reveal font-heading text-4xl md:text-7xl mb-4" style="--reveal-delay: 0.08s">SELECTED<br/>WORK</h2>
+      <h2 class="reveal mb-4 font-heading text-4xl md:text-7xl" style="--reveal-delay: 0.08s">SELECTED<br/>WORK</h2>
     </div>
 
-    <div class="reveal project-deck grid gap-3 md:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.4fr)] md:gap-12" style="--reveal-delay: 0.16s" data-project-deck>
-      <div
-        class="project-rail flex gap-2 overflow-x-auto pb-2 md:max-h-[23rem] md:flex-col md:overflow-y-auto md:overflow-x-hidden md:pb-0"
-        role="tablist"
-        aria-label="Selected projects"
-      >
-        {projects.map((project, index) => (
-          <button
-            type="button"
-            id={`project-tab-${project.num}`}
-            class={`project-tab min-w-[10rem] md:min-w-0 text-left border-l-2 px-3 py-2 md:px-4 md:py-3 ${index === 0 ? 'is-active' : ''}`}
-            data-project-index={index}
-            role="tab"
-            aria-selected={index === 0 ? 'true' : 'false'}
-            aria-controls={`project-panel-${project.num}`}
-            tabindex={index === 0 ? '0' : '-1'}
-          >
-            <span class="project-tab-number font-heading text-2xl text-[var(--color-accent)]">
-              {project.num}
-            </span>
-            <span class="mt-1 block font-heading text-sm leading-tight md:text-lg text-[var(--color-text)]">
-              {project.title}
-            </span>
-            <span class="mt-1 md:mt-2 block font-body text-[0.65rem] md:text-[0.7rem] uppercase tracking-caps text-[var(--color-muted)]">
-              {project.metric}
-            </span>
-          </button>
-        ))}
-      </div>
+    {projects.length > 0 ? (
+      <div class="reveal project-deck grid gap-3 md:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.4fr)] md:gap-12" style="--reveal-delay: 0.16s" data-project-deck>
+        <nav
+          class="project-rail flex gap-2 overflow-x-auto pb-2 md:max-h-[23rem] md:flex-col md:overflow-x-hidden md:overflow-y-auto md:pb-0"
+          aria-label="Selected projects"
+          data-project-rail
+        >
+          {projects.map((project, index) => (
+            <a
+              href={`#project-panel-${project.num}`}
+              id={`project-tab-${project.num}`}
+              class={`project-tab min-w-[10rem] border-l-2 px-3 py-2 text-left md:min-w-0 md:px-4 md:py-3 ${index === 0 ? 'is-active' : ''}`}
+              data-project-index={index}
+            >
+              <span class="project-tab-number font-heading text-2xl text-[var(--color-accent)]">
+                {project.num}
+              </span>
+              <span class="mt-1 block font-heading text-sm leading-tight text-[var(--color-text)] md:text-lg">
+                {project.title}
+              </span>
+              <span class="mt-1 block font-body text-[0.65rem] uppercase tracking-caps text-[var(--color-muted)] md:mt-2 md:text-[0.7rem]">
+                {project.highlight}
+              </span>
+            </a>
+          ))}
+        </nav>
 
-      <div class="project-stage border-l-2 border-[var(--color-accent)] pl-5 sm:pl-6 md:min-h-[23rem]">
-        {projects.map((project, index) => (
-          <article
-            id={`project-panel-${project.num}`}
-            class="project-panel"
-            data-project-panel
-            role="tabpanel"
-            aria-labelledby={`project-tab-${project.num}`}
-            hidden={index !== 0}
-          >
-            <div class="mb-4 md:mb-5 flex items-start justify-between gap-4">
-              <div>
-                <div class="font-body text-xs text-[var(--color-muted)] mb-2 md:mb-3">
-                  <span class="text-[var(--color-accent)]">$</span> open ./projects/{project.num}
+        <div class="project-stage border-l-2 border-[var(--color-accent)] pl-5 sm:pl-6 md:min-h-[23rem]">
+          {projects.map((project, index) => (
+            <article
+              id={`project-panel-${project.num}`}
+              class={`project-panel ${index === 0 ? 'is-active' : ''}`}
+              data-project-panel
+            >
+              <div class="mb-4 flex items-start justify-between gap-4 md:mb-5">
+                <div>
+                  <div class="mb-2 font-body text-xs text-[var(--color-muted)] md:mb-3">
+                    <span class="text-[var(--color-accent)]">$</span> open ./projects/{project.num}
+                  </div>
+                  <h3 class="font-heading text-3xl md:text-6xl">
+                    {project.title}
+                  </h3>
                 </div>
-                <h3 class="font-heading text-3xl md:text-6xl">
-                  {project.title}
-                </h3>
-              </div>
-              <div class="font-body text-xs whitespace-nowrap pt-1">
-                <span class="text-[var(--color-accent)]">{project.num}</span>
-                <span class="text-[var(--color-muted)]"> / {String(projects.length).padStart(2, '0')}</span>
-              </div>
-            </div>
-
-            <p class="max-w-3xl text-sm font-light leading-5 text-[var(--color-muted)] md:text-base md:leading-7">
-              {project.description}
-            </p>
-
-            <div class="mt-4 md:mt-6 flex flex-wrap gap-2 font-body text-xs md:gap-3">
-              {project.tech.map((t) => (
-                <span class="tech-chip px-3 py-1">
-                  {t}
-                </span>
-              ))}
-            </div>
-
-            <div class="mt-4 md:mt-6 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-              <div>
-                <div class="font-body text-xs uppercase tracking-caps text-[var(--color-muted)] mb-2">Output</div>
-                <div class="font-body text-sm text-[var(--color-accent)]">
-                  {project.metric}
+                <div class="whitespace-nowrap pt-1 font-body text-xs">
+                  <span class="text-[var(--color-accent)]">{project.num}</span>
+                  <span class="text-[var(--color-muted)]"> / {String(projects.length).padStart(2, '0')}</span>
                 </div>
               </div>
 
-              <div class="flex gap-5 font-body text-sm">
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="arrow-link"
-                >
-                  <span class="arrow" aria-hidden="true">→</span> github
-                </a>
+              <p class="max-w-3xl text-sm font-light leading-5 text-[var(--color-muted)] md:text-base md:leading-7">
+                {project.description}
+              </p>
 
-                {project.homepage && (
-                  <a
-                    href={project.homepage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="arrow-link"
-                  >
-                    <span class="arrow" aria-hidden="true">→</span> live
-                  </a>
-                )}
+              <ul class="mt-4 flex flex-wrap gap-2 font-body text-xs md:mt-6 md:gap-3" role="list" aria-label={`${project.title} technologies`}>
+                {project.tech.map((technology) => (
+                  <li class="tech-chip px-3 py-1">
+                    {technology}
+                  </li>
+                ))}
+              </ul>
+
+              <div class="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:mt-6">
+                <div>
+                  <div class="mb-2 font-body text-xs uppercase tracking-caps text-[var(--color-muted)]">Highlight</div>
+                  <div class="font-body text-sm text-[var(--color-accent)]">
+                    {project.highlight}
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-start gap-2 font-body sm:items-end">
+                  {project.repositoryNote && (
+                    <span class="max-w-xs text-xs text-[var(--color-muted)] sm:text-right">
+                      {project.repositoryNote}
+                    </span>
+                  )}
+
+                  <div class="flex flex-wrap gap-5 text-sm">
+                    {project.githubUrl ? (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={project.repositoryLinkAriaLabel}
+                        class="arrow-link"
+                      >
+                        <span class="arrow" aria-hidden="true">→</span> {project.repositoryLinkLabel}
+                      </a>
+                    ) : null}
+
+                    {project.homepage && (
+                      <a
+                        href={project.homepage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${project.title} live site (opens in a new tab)`}
+                        class="arrow-link"
+                      >
+                        <span class="arrow" aria-hidden="true">→</span> live
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
-    </div>
+    ) : (
+      <p class="reveal border-l-2 border-[var(--color-accent)] pl-5 font-body text-sm text-[var(--color-muted)]" role="status">
+        Project details are temporarily unavailable. Public repositories remain available from the GitHub profile.
+      </p>
+    )}
   </div>
 </section>
 
 <script>
   const decks = document.querySelectorAll<HTMLElement>('[data-project-deck]');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   decks.forEach((deck) => {
-    const tabs = Array.from(deck.querySelectorAll<HTMLButtonElement>('[data-project-index]'));
+    const rail = deck.querySelector<HTMLElement>('[data-project-rail]');
+    const tabs = Array.from(deck.querySelectorAll<HTMLAnchorElement>('[data-project-index]'));
     const panels = Array.from(deck.querySelectorAll<HTMLElement>('[data-project-panel]'));
+    if (!rail || tabs.length === 0 || panels.length === 0) return;
+
+    rail.setAttribute('role', 'tablist');
+    const desktopLayout = window.matchMedia('(min-width: 768px)');
+    const syncOrientation = () => {
+      rail.setAttribute('aria-orientation', desktopLayout.matches ? 'vertical' : 'horizontal');
+    };
+    syncOrientation();
+    desktopLayout.addEventListener('change', syncOrientation);
+
+    tabs.forEach((tab, index) => {
+      tab.setAttribute('role', 'tab');
+      tab.setAttribute('aria-controls', panels[index]?.id ?? '');
+    });
+
+    panels.forEach((panel, index) => {
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', tabs[index]?.id ?? '');
+      panel.tabIndex = 0;
+    });
 
     function activateProject(index: number, focusTab = false) {
       if (index < 0 || index >= tabs.length) return;
@@ -135,10 +168,16 @@ const projects = await getPortfolioProjects();
       });
 
       panels.forEach((panel, panelIndex) => {
-        panel.hidden = panelIndex !== index;
+        const isActive = panelIndex === index;
+        panel.classList.toggle('is-active', isActive);
+        panel.hidden = !isActive;
       });
 
-      tabs[index]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      tabs[index]?.scrollIntoView({
+        behavior: reducedMotion.matches ? 'auto' : 'smooth',
+        block: 'nearest',
+        inline: 'nearest'
+      });
 
       if (focusTab) {
         tabs[index]?.focus();
@@ -146,7 +185,11 @@ const projects = await getPortfolioProjects();
     }
 
     tabs.forEach((tab) => {
-      tab.addEventListener('click', () => activateProject(tabs.indexOf(tab)));
+      tab.addEventListener('click', (event) => {
+        event.preventDefault();
+        activateProject(tabs.indexOf(tab));
+      });
+
       tab.addEventListener('keydown', (event) => {
         const currentIndex = tabs.indexOf(tab);
         let nextIndex = currentIndex;
@@ -175,5 +218,9 @@ const projects = await getPortfolioProjects();
         activateProject(nextIndex, true);
       });
     });
+
+    deck.classList.add('is-enhanced');
+    const linkedPanelIndex = panels.findIndex((panel) => `#${panel.id}` === window.location.hash);
+    activateProject(linkedPanelIndex >= 0 ? linkedPanelIndex : 0);
   });
 </script>
