@@ -25,18 +25,38 @@ export const curatedProjects = [
     githubUrl: 'https://github.com/AbubakarMahmood/pak_connect'
   },
   {
-    repo: 'Incident-SLA-Tracker',
+    repo: 'ASP.NET-Core-Inventory-Management-API',
     order: 2,
+    title: 'Inventory & Work Order API',
+    description:
+      'Single-location inventory ledger and work-order fulfilment demo with CQRS, retry-safe stock posting, PostgreSQL xmin concurrency, migrations, and tested backup/restore recovery.',
+    tech: ['ASP.NET Core 8', 'Blazor', 'PostgreSQL', 'Docker'],
+    highlight: 'Ledger integrity + recovery',
+    githubUrl: 'https://github.com/AbubakarMahmood/ASP.NET-Core-Inventory-Management-API'
+  },
+  {
+    repo: 'Incident-SLA-Tracker',
+    order: 3,
     title: 'Incident & SLA Tracker',
     description:
-      'Incident-management API with JWT auth, priority-based SLA assignment, scheduled breach workers, migrations, and service-layer tests.',
-    tech: ['FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
-    highlight: 'Observability + CI',
+      'Auditable incident-SLA transition service with PostgreSQL-backed idempotency, migration rehearsal, competing-worker tests, and an at-least-once outbox.',
+    tech: ['Python', 'FastAPI', 'PostgreSQL', 'Docker'],
+    highlight: 'Concurrency + recovery',
     githubUrl: 'https://github.com/AbubakarMahmood/Incident-SLA-Tracker'
   },
   {
+    repo: 'go-rate-limiter',
+    order: 4,
+    title: 'Go Rate Limiter',
+    description:
+      'Admission-control service with atomic memory and standalone-Redis decisions, all-or-nothing bulk permits, bounded Prometheus metrics, and fail-closed dependency handling.',
+    tech: ['Go', 'Redis', 'Gin', 'Prometheus', 'Docker'],
+    highlight: 'Atomic admission control',
+    githubUrl: 'https://github.com/AbubakarMahmood/go-rate-limiter'
+  },
+  {
     repo: 'salahsync',
-    order: 3,
+    order: 5,
     title: 'SalahSync',
     description:
       'Offline-first prayer-time and mosque Jamaat scheduler with local persistence, timing-rule resolution, backup/import, Qibla tools, widgets, and tests.',
@@ -47,25 +67,5 @@ export const curatedProjects = [
     repositoryLinkLabel: 'support',
     repositoryLinkAriaLabel:
       'SalahSync public support and release repository on GitHub (opens in a new tab)'
-  },
-  {
-    repo: 'Unified-Public-Data',
-    order: 4,
-    title: 'Unified Public Data Gateway',
-    description:
-      'GraphQL gateway that federates public REST APIs with caching, DataLoader batching, persisted queries, rate limits, subscriptions, tests, and Docker config.',
-    tech: ['TypeScript', 'Apollo Server', 'GraphQL'],
-    highlight: 'Public API federation',
-    githubUrl: 'https://github.com/AbubakarMahmood/Unified-Public-Data'
-  },
-  {
-    repo: 'PERDS',
-    order: 5,
-    title: 'Predictive Dispatch Simulator',
-    description:
-      'Emergency-response simulator using dynamic weighted graphs, Dijkstra/A* routing, custom indexed heap, CSV scenarios, and JUnit-tested dispatch logic.',
-    tech: ['Java 21', 'Maven', 'JUnit', 'Graphs'],
-    highlight: 'Reproducible routing metrics',
-    githubUrl: 'https://github.com/AbubakarMahmood/PERDS'
   }
 ] as const satisfies readonly ProjectOverride[];

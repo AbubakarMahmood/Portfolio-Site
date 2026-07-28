@@ -5,10 +5,10 @@ import { safeGitHubUrl, safeHttpsUrl } from '../../src/lib/projects';
 const sectionIds = ['intro', 'work', 'stack', 'contact'];
 const knownProjectTitles = [
   'PakConnect',
+  'Inventory & Work Order API',
   'Incident & SLA Tracker',
-  'SalahSync',
-  'Unified Public Data Gateway',
-  'Predictive Dispatch Simulator'
+  'Go Rate Limiter',
+  'SalahSync'
 ];
 
 async function expectKnownContent(page: Page) {

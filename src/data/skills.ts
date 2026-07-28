@@ -1,6 +1,6 @@
 export const skillGroups = [
-  { category: 'lang', items: ['Dart', 'Python', 'TypeScript', 'JavaScript', 'Java', 'SQL'] },
-  { category: 'mobile', items: ['Flutter', 'Riverpod', 'Drift', 'SQLite', 'Android basics'] },
-  { category: 'api', items: ['FastAPI', 'REST', 'GraphQL', 'SQLAlchemy', 'JWT', 'Celery'] },
-  { category: 'quality', items: ['Docker', 'GitHub Actions', 'pytest', 'Playwright', 'JUnit', 'OpenTelemetry'] }
+  { category: 'lang', items: ['Dart', 'C#', 'Go', 'Python', 'TypeScript', 'SQL'] },
+  { category: 'mobile', items: ['Flutter', 'Riverpod', 'Drift', 'SQLite', 'Android'] },
+  { category: 'api', items: ['ASP.NET Core', 'FastAPI', 'REST', 'PostgreSQL', 'Redis', 'GraphQL'] },
+  { category: 'quality', items: ['Docker', 'GitHub Actions', 'pytest', 'xUnit', 'Playwright', 'Trivy'] }
 ] as const;
