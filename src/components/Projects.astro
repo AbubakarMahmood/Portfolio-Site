@@ -76,10 +76,21 @@ const projects = await getPortfolioProjects();
 
               <div class="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:mt-6">
                 <div>
-                  <div class="mb-2 font-body text-xs uppercase tracking-caps text-[var(--color-muted)]">Highlight</div>
-                  <div class="font-body text-sm text-[var(--color-accent)]">
-                    {project.highlight}
-                  </div>
+                  {project.example ? (
+                    <>
+                      <div class="mb-2 font-body text-xs uppercase tracking-caps text-[var(--color-muted)]">In practice</div>
+                      <p class="max-w-prose text-sm leading-5">{project.example.detail}</p>
+                      <a href={project.example.source} class="arrow-link mt-2 inline-block font-body text-sm"
+                        aria-label={`Read the ${project.title} test on GitHub`}>Read the test <span aria-hidden="true">↗</span></a>
+                    </>
+                  ) : (
+                    <>
+                      <div class="mb-2 font-body text-xs uppercase tracking-caps text-[var(--color-muted)]">Highlight</div>
+                      <div class="font-body text-sm text-[var(--color-accent)]">
+                        {project.highlight}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div class="flex flex-col items-start gap-2 font-body sm:items-end">

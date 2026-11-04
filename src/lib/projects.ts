@@ -29,6 +29,7 @@ export interface PortfolioProject {
   repositoryLinkLabel?: string;
   repositoryLinkAriaLabel?: string;
   updatedAt?: string;
+  example?: ProjectOverride['example'];
 }
 
 type ProjectWithoutNumber = Omit<PortfolioProject, 'num'>;
@@ -200,6 +201,7 @@ function fromOverride(project: ProjectOverride, repo?: GitHubRepo): ProjectWitho
     githubUrl,
     homepage,
     highlight: project.highlight,
+    example: project.example,
     repositoryNote: project.repositoryNote ?? (githubUrl ? undefined : 'Repository link unavailable'),
     repositoryLinkLabel: project.repositoryLinkLabel ?? 'github',
     repositoryLinkAriaLabel:
