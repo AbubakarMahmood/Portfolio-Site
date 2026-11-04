@@ -419,18 +419,14 @@ test('honors reduced motion and exposes every project when printing', async ({ p
   await expectAllProjectPanelsVisible(page);
 });
 
-test('has no serious or critical Axe violations', async ({ page }) => {
+test('has no Axe violations, including enhanced tab roles', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
 
   const results = await new AxeBuilder({ page }).analyze();
-  const severeViolations = results.violations.filter(
-    (violation) => violation.impact === 'serious' || violation.impact === 'critical'
-  );
-
   expect(
-    severeViolations,
-    severeViolations
+    results.violations,
+    results.violations
       .map((violation) => `${violation.id}: ${violation.help}`)
       .join('\n')
   ).toEqual([]);

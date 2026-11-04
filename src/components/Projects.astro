@@ -42,7 +42,7 @@ const projects = await getPortfolioProjects();
 
         <div class="project-stage border-l-2 border-[var(--color-accent)] pl-5 sm:pl-6 md:min-h-[23rem]">
           {projects.map((project, index) => (
-            <article
+            <div
               id={`project-panel-${project.num}`}
               class={`project-panel ${index === 0 ? 'is-active' : ''}`}
               data-project-panel
@@ -127,7 +127,7 @@ const projects = await getPortfolioProjects();
                   </div>
                 </div>
               </div>
-            </article>
+            </div>
           ))}
         </div>
       </div>
