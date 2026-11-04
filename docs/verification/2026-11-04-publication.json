@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-04",
+  "classification": "public portfolio publication evidence; no credentials or local paths",
+  "url": "https://abubakarmahmood.com/",
+  "source_commit": "c17acf05d995598621a75fc53007d6f4cf8c1cb7",
+  "ci": "https://github.com/AbubakarMahmood/Portfolio-Site/actions/runs/41845765415",
+  "vercel": "https://vercel.com/abubakar-mahmoods-projects/portfolio-site/JBFvsoT2d1cRmT7L3J1pvfe6n3JJ",
+  "dependency_audit": "zero reported vulnerabilities; exact committed lockfile",
+  "local_browser_cases_passed": 18,
+  "live": [
+    {
+      "layout": "desktop",
+      "http": 200,
+      "viewport": [
+        1280,
+        800
+      ],
+      "axe_violations": [],
+      "script_errors": [],
+      "first_tab": "Skip to main content",
+      "public_proof_links": [
+        "https://github.com/AbubakarMahmood/pak_connect/blob/b66184e81fad701c2e43dce23525ad256e941ab3/test/core/messaging/relay_ack_propagation_test.dart#L203",
+        "https://github.com/AbubakarMahmood/ASP.NET-Core-Inventory-Management-API/blob/4163943921c6f855d6ab405f17f8271f275db73d/tests/InventoryAPI.IntegrationTests/StockMovementEndpointsTests.cs#L99",
+        "https://github.com/AbubakarMahmood/Incident-SLA-Tracker/blob/10aabf2777fc68352a8e609c9bfa1c046b378145/tests/integration/test_idempotency_concurrency.py#L161",
+        "https://github.com/AbubakarMahmood/go-rate-limiter/blob/ba68f2a2edd812c1846d855ce340c21d1517587c/internal/algorithms/redis_integration_test.go#L86"
+      ],
+      "canonical": "https://abubakarmahmood.com/",
+      "og_image": "https://abubakarmahmood.com/og.png"
+    },
+    {
+      "layout": "mobile",
+      "http": 200,
+      "viewport": [
+        390,
+        844
+      ],
+      "axe_violations": [],
+      "script_errors": [],
+      "first_tab": "Skip to main content",
+      "public_proof_links": [
+        "https://github.com/AbubakarMahmood/pak_connect/blob/b66184e81fad701c2e43dce23525ad256e941ab3/test/core/messaging/relay_ack_propagation_test.dart#L203",
+        "https://github.com/AbubakarMahmood/ASP.NET-Core-Inventory-Management-API/blob/4163943921c6f855d6ab405f17f8271f275db73d/tests/InventoryAPI.IntegrationTests/StockMovementEndpointsTests.cs#L99",
+        "https://github.com/AbubakarMahmood/Incident-SLA-Tracker/blob/10aabf2777fc68352a8e609c9bfa1c046b378145/tests/integration/test_idempotency_concurrency.py#L161",
+        "https://github.com/AbubakarMahmood/go-rate-limiter/blob/ba68f2a2edd812c1846d855ce340c21d1517587c/internal/algorithms/redis_integration_test.go#L86"
+      ],
+      "canonical": "https://abubakarmahmood.com/",
+      "og_image": "https://abubakarmahmood.com/og.png"
+    },
+    {
+      "layout": "no-js",
+      "http": 200,
+      "viewport": [
+        390,
+        844
+      ],
+      "axe_violations": [],
+      "script_errors": [],
+      "first_tab": "Skip to main content",
+      "public_proof_links": [
+        "https://github.com/AbubakarMahmood/pak_connect/blob/b66184e81fad701c2e43dce23525ad256e941ab3/test/core/messaging/relay_ack_propagation_test.dart#L203",
+        "https://github.com/AbubakarMahmood/ASP.NET-Core-Inventory-Management-API/blob/4163943921c6f855d6ab405f17f8271f275db73d/tests/InventoryAPI.IntegrationTests/StockMovementEndpointsTests.cs#L99",
+        "https://github.com/AbubakarMahmood/Incident-SLA-Tracker/blob/10aabf2777fc68352a8e609c9bfa1c046b378145/tests/integration/test_idempotency_concurrency.py#L161",
+        "https://github.com/AbubakarMahmood/go-rate-limiter/blob/ba68f2a2edd812c1846d855ce340c21d1517587c/internal/algorithms/redis_integration_test.go#L86"
+      ],
+      "canonical": "https://abubakarmahmood.com/",
+      "og_image": "https://abubakarmahmood.com/og.png"
+    }
+  ],
+  "routes": [
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "path": "/sitemap-index.xml",
+      "status": 200,
+      "expected": 200
+    },
+    {
+      "path": "/this-page-should-not-exist-20261104",
+      "status": 404,
+      "expected": 404
+    },
+    {
+      "path": "https://abubakarmahmood.com/og.png",
+      "status": 200,
+      "expected": 200
+    }
+  ],
+  "lighthouse": {
+    "version": "13.6.0",
+    "profile": "mobile",
+    "throttling_method": "simulate",
+    "scores": {
+      "performance": 1,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 1,
+      "agentic-browsing": 1
+    },
+    "runtime_error": null,
+    "warnings": []
+  },
+  "observatory": {
+    "id": 133543464,
+    "details_url": "https://developer.mozilla.org/en-US/observatory/analyze?host=abubakarmahmood.com",
+    "algorithm_version": 6,
+    "scanned_at": "2026-11-04T14:19:46.043Z",
+    "error": null,
+    "grade": "B",
+    "score": 75,
+    "status_code": 200,
+    "tests_failed": 1,
+    "tests_passed": 11,
+    "tests_quantity": 12
+  },
+  "raw_evidence_sha256": {
+    "portfolio-live.json": "a70285a628801a81fdca4a5e0fdef47be291b72e7ed8f1ddaeae6b92426a42a7",
+    "portfolio-lighthouse.json": "fda6508d0044558128204464a059016281659deef441a538ea827173753f1581",
+    "portfolio-observatory.json": "c02f72953a3c871f9e61d2f710d7e5a3cf826b46ee45bd95b255b25758ed52da",
+    "portfolio-build.json": "a07f30ecbe55cd9f5891f80211712bffbadae961c4107b1d45464619912e9ada"
+  },
+  "limits": [
+    "Single headless Chromium lab run; no real-device performance guarantee",
+    "Physical mobile, actual screen-reader speech and comprehension unqualified",
+    "CSP enforcement is a separate staged design/check task; not full security certification"
+  ]
+}
