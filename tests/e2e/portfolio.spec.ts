@@ -73,6 +73,9 @@ async function keydownWasPrevented(target: Locator, key: string) {
 }
 
 async function blockInlineEnhancements(page: Page) {
+  // Astro may emit a component script as an external chunk once it grows.
+  // Block both forms, leaving the separate early /js/init.js bootstrap intact.
+  await page.route('**/_astro/*.js', route => route.abort());
   await page.route(
     (url) => url.pathname === '/',
     async (route) => {
@@ -315,10 +318,10 @@ test.describe('progressive enhancement', () => {
         testWindow.__portfolioScrollCalls.length = 0;
       }
       document.dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
+        new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
       );
       document.dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
+        new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
       );
     });
     await page.waitForTimeout(650);

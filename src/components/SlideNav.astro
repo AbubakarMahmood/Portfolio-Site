@@ -155,6 +155,7 @@ const totalLabel = String(sectionDefinitions.length).padStart(2, '0');
     }
 
     suspendSnap();
+    scrollRoot.classList.remove('keyboard-scroll');
     // Flush the snap-state change before starting a smooth scroll.
     void scrollRoot.offsetHeight;
     const startTop = scrollRoot.scrollTop;
@@ -191,21 +192,40 @@ const totalLabel = String(sectionDefinitions.length).padStart(2, '0');
       event.defaultPrevented ||
       event.metaKey ||
       event.ctrlKey ||
-      event.altKey ||
-      event.shiftKey ||
-      targetIsInteractive(event.target)
+      event.altKey
     ) {
       return;
     }
 
+    // Vertical reading keys move the actual scroll container, including when
+    // focus is on the body or a header link. Never skip an oversized section.
+    const target = event.target instanceof Element ? event.target : null;
+    const interactive = targetIsInteractive(event.target);
+    const ordinaryLink = target?.closest('a:not([role])');
+    const readingKey = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].includes(event.key);
+    if (scrollRoot && readingKey && (!interactive || ordinaryLink) && (!event.shiftKey || event.key === ' ')) {
+      event.preventDefault();
+      scrollRequestId += 1;
+      if (scrollFallbackTimer) window.clearTimeout(scrollFallbackTimer);
+      scrollFallbackTimer = undefined;
+      // Keep snapping disabled while reading; explicit section navigation restores it.
+      scrollRoot.classList.add('keyboard-scroll');
+      const page = scrollRoot.clientHeight * 0.9;
+      const delta = event.key === 'ArrowDown' ? 40 : event.key === 'ArrowUp' ? -40
+        : event.key === 'PageUp' || (event.key === ' ' && event.shiftKey) ? -page : page;
+      const top = event.key === 'Home' ? 0 : event.key === 'End' ? scrollRoot.scrollHeight
+        : scrollRoot.scrollTop + delta;
+      scrollRoot.scrollTo({ top, behavior: 'auto' });
+      return;
+    }
+    if (interactive || event.shiftKey) return;
+
     let nextIndex: number | undefined;
     switch (event.key) {
       case 'ArrowRight':
-      case 'ArrowDown':
         nextIndex = currentSection + 1;
         break;
       case 'ArrowLeft':
-      case 'ArrowUp':
         nextIndex = currentSection - 1;
         break;
       case 'Escape':

@@ -167,7 +167,8 @@
     scrollbar-color: var(--color-accent-dim) transparent;
   }
 
-  .slide-scroll.snap-suspend {
+  .slide-scroll.snap-suspend,
+  .slide-scroll.keyboard-scroll {
     scroll-snap-type: none !important;
   }
 

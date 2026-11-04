@@ -157,7 +157,7 @@ const projects = await getPortfolioProjects();
       panel.tabIndex = 0;
     });
 
-    function activateProject(index: number, focusTab = false) {
+    function activateProject(index: number, focusTab = false, scrollTab = true) {
       if (index < 0 || index >= tabs.length) return;
 
       tabs.forEach((tab, tabIndex) => {
@@ -173,7 +173,7 @@ const projects = await getPortfolioProjects();
         panel.hidden = !isActive;
       });
 
-      tabs[index]?.scrollIntoView({
+      if (scrollTab) tabs[index]?.scrollIntoView({
         behavior: reducedMotion.matches ? 'auto' : 'smooth',
         block: 'nearest',
         inline: 'nearest'
@@ -221,6 +221,7 @@ const projects = await getPortfolioProjects();
 
     deck.classList.add('is-enhanced');
     const linkedPanelIndex = panels.findIndex((panel) => `#${panel.id}` === window.location.hash);
-    activateProject(linkedPanelIndex >= 0 ? linkedPanelIndex : 0);
+    // Initial enhancement must not move the browser's sequential focus origin.
+    activateProject(linkedPanelIndex >= 0 ? linkedPanelIndex : 0, false, false);
   });
 </script>

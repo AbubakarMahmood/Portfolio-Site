@@ -22,7 +22,7 @@ Third-party dependencies remain under their own licenses.
 
 ## Requirements
 
-- Node.js 24; `.nvmrc` is committed for local development and CI
+- Node.js 24.22.2; `.nvmrc` pins the version verified on Windows and used by CI
 - npm and the committed lockfile
 
 ```bash
@@ -31,6 +31,10 @@ npm ci
 ```
 
 Use `npm ci`, not `npm install`, for reproducible verification and deployment builds.
+
+The [November review intake](docs/review-2026-11-04.md) records keyboard fixes,
+the public portfolio comparison and remaining content work. Node 24.13.1 crashes
+at Astro build shutdown on this Windows host; 24.22.2 completes with exit 0.
 
 ## Development
 
